@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="dept_items">
+        <item>通信工程学院</item>
+        <item>电子信息工程学院</item>
+        <item>计算机学院</item>
+        <item>机电工程学院</item>
+        <item>物理与光电工程学院</item>
+        <item>更多</item>
+    </string-array>
+    <string-array name="grade_items">
+    <item>大一</item>
+    <item>大二</item>
+    <item>大三</item>
+    <item>大四</item>
+    </string-array>
+
+    <string-array name="xinjiu_items">
+        <item>全新</item>
+        <item>9成新</item>
+        <item>8成新</item>
+        <item>7成新</item>
+        <item>6成新</item>
+        <item>5成新</item>
+    </string-array>
+
+    <string-array name="tab_items">
+        <item>出售</item>
+        <item>发布</item>
+        <item>我的</item>
+    </string-array>
+</resources>

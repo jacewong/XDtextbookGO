@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">西电课本GO</string>
+    <string name="searchHint">书名关键字</string>
+</resources>
