@@ -7,14 +7,14 @@
     <include layout="@layout/title_layout" />
 
     <TextView
-    android:id="@+id/user_text"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="10dp"
-    android:gravity="center"
-    android:layout_centerVertical="true"
-    android:text="User Name"
-    android:textSize="18sp" />
+        android:id="@+id/user_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:background="#fff"
+        android:layout_centerVertical="true"
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/sale_text"

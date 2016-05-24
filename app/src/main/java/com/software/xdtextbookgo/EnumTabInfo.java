@@ -12,7 +12,7 @@ public enum EnumTabInfo {
 
 
     Tab_Index(0, "Tab_Home", HomeActivity.class, R.drawable.ic_home),
-    Tab_Contact(1, "Tab_Publish", PublishActivity.class, R.drawable.ic_add),
+    Tab_Contact(1, "Tab_Publish", HomeActivity.class, R.drawable.ic_add),
     Tab_My(2, "Tab_My", PersonalActivity.class, R.drawable.ic_mine);
 
     private int index;

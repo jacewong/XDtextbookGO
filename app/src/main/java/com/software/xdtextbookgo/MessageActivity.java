@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Created by huang zhen xi on 2016/4/28.
  */
-public class MessageActivity extends AppCompatActivity {
+public class MessageActivity extends XDtextbookGOActivity {
     private TextView title_text;
     private Button btn_back;
     private ImageView back,send;
@@ -33,7 +33,6 @@ public class MessageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.message_layout);
         inittoolbar();
   /*      title_text = (TextView) this.findViewById(R.id.title_text);

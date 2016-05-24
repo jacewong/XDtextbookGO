@@ -2,11 +2,13 @@ package com.software.xdtextbookgo;
 
 import android.app.TabActivity;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TabHost;
@@ -25,6 +27,7 @@ public class TabhostActivity extends TabActivity implements TabHost.OnTabChangeL
     }
 
     static TabHost tabHost;
+    private ImageButton addbtn;
     private String[] TABSTRS;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +43,15 @@ public class TabhostActivity extends TabActivity implements TabHost.OnTabChangeL
 
         //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
+        addbtn = (ImageButton) findViewById(R.id.publisher_btn);
+        addbtn.setColorFilter(getResources().getColor(R.color.blueAccent));
+        addbtn.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View view){
+                Intent intent = new Intent(TabhostActivity.this, PublishActivity.class);
+                startActivity(intent);
+            }
+        });
+
         initData();
         initView();
     }
@@ -53,12 +65,11 @@ public class TabhostActivity extends TabActivity implements TabHost.OnTabChangeL
         tabHost = getTabHost();
 
         for (int i = 0, count = TABSTRS.length; i < count; i++) {
-            TabHost.TabSpec tabSpec = tabHost
-                    .newTabSpec(EnumTabInfo.getTabInfoByIndex(i).getTag())
-                    .setIndicator(getTabItemView(i))
-                    .setContent(getTabItemIntent(i));
-            tabHost.addTab(tabSpec);
-
+                TabHost.TabSpec tabSpec = tabHost
+                        .newTabSpec(EnumTabInfo.getTabInfoByIndex(i).getTag())
+                        .setIndicator(getTabItemView(i))
+                        .setContent(getTabItemIntent(i));
+                tabHost.addTab(tabSpec);
         }
         setTabItemSlectedShow(0);
         tabHost.setCurrentTab(0);
@@ -69,7 +80,8 @@ public class TabhostActivity extends TabActivity implements TabHost.OnTabChangeL
         View vItem = View.inflate(this, R.layout.tab_item, null);
         ImageView imgIcon = (ImageView) vItem.findViewById(R.id.itemtab_img_icon);
         TextView txtName = (TextView) vItem.findViewById(R.id.itemtab_txt_name);
-        imgIcon.setImageResource(EnumTabInfo.getTabInfoByIndex(index).getIcon());
+        if(index != 1)
+            imgIcon.setImageResource(EnumTabInfo.getTabInfoByIndex(index).getIcon());
         txtName.setText(TABSTRS[index]);
 
         return vItem;

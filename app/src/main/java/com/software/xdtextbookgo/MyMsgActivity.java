@@ -14,7 +14,7 @@ import android.widget.TextView;
 /**
  * Created by huang zhen xi on 2016/4/28.
  */
-public class MyMsgActivity extends AppCompatActivity {
+public class MyMsgActivity extends XDtextbookGOActivity {
     private TextView title_text;
     private Button btn_back;
     private ImageView back;

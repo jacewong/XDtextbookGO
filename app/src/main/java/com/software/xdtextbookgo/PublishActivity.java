@@ -19,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -33,7 +34,7 @@ import java.io.IOException;
 /**
  * Created by huang zhen xi on 2016/4/24.
  */
-public class PublishActivity extends AppCompatActivity {
+public class PublishActivity extends XDtextbookGOActivity {
     private TextView title_text, et_dept, et_xinjiu, et_grade;
     private Button btn_back,btn_publish;
     private ImageButton img_btn;
@@ -63,10 +64,9 @@ public class PublishActivity extends AppCompatActivity {
         et_dept = (TextView) this.findViewById(R.id.et_dept);
         et_grade = (TextView) this.findViewById(R.id.et_grade);
         et_xinjiu = (TextView) this.findViewById(R.id.et_xinjiu);
-        et_dept.setOnClickListener(new View.OnClickListener(){
+        et_dept.setOnClickListener(new View.OnClickListener() {
 
-            public void onClick(View V)
-            {
+            public void onClick(View V) {
                 new AlertDialog.Builder(PublishActivity.this)
                         .setTitle("院系")
                         .setItems(R.array.dept_items, new DialogInterface.OnClickListener() {
@@ -87,10 +87,9 @@ public class PublishActivity extends AppCompatActivity {
         });
 
 
-        et_grade.setOnClickListener(new View.OnClickListener(){
+        et_grade.setOnClickListener(new View.OnClickListener() {
 
-            public void onClick(View V)
-            {
+            public void onClick(View V) {
                 new AlertDialog.Builder(PublishActivity.this)
                         .setTitle("年级")
                         .setItems(R.array.grade_items, new DialogInterface.OnClickListener() {
@@ -110,10 +109,9 @@ public class PublishActivity extends AppCompatActivity {
         });
 
 
-        et_xinjiu.setOnClickListener(new View.OnClickListener(){
+        et_xinjiu.setOnClickListener(new View.OnClickListener() {
 
-            public void onClick(View V)
-            {
+            public void onClick(View V) {
                 new AlertDialog.Builder(PublishActivity.this)
                         .setTitle("书籍新旧")
                         .setItems(R.array.xinjiu_items, new DialogInterface.OnClickListener() {
@@ -147,6 +145,7 @@ public class PublishActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
+
     public boolean onOptionsItemSelected(MenuItem item)
     {
         // TODO Auto-generated method stub
@@ -155,8 +154,9 @@ public class PublishActivity extends AppCompatActivity {
            // Intent intent = new Intent(PublishActivity.this,TabhostActivity.class);
            /// PublishActivity.this.startActivity(intent);
             //
-            TabhostActivity.Instance.getTabHost().setCurrentTab(0);
-            TabhostActivity.Instance.onTabChanged("Tab_Home");
+            //TabhostActivity.Instance.getTabHost().setCurrentTab(0);
+            //TabhostActivity.Instance.onTabChanged("Tab_Home");
+            finish();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -168,13 +168,22 @@ public class PublishActivity extends AppCompatActivity {
      *
      * 5.7使用底部弹窗 zxhuang
      */
+
+    public void backgroundAlpha(float bgAlpha)
+    {
+        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        lp.alpha = bgAlpha; //0.0-1.0
+        getWindow().setAttributes(lp);
+    }
+
+
     private void init() {
         img_btn = (ImageButton) findViewById(R.id.addImageView);
         //为ImageButton和Button添加监听事件
         img_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                backgroundAlpha(0.7f);
                 menuWindow = new SelectPicPopupWindow(mContext, itemsOnClick);
                 menuWindow.showAtLocation(findViewById(R.id.publishLayout),
                         Gravity.BOTTOM| Gravity.CENTER_HORIZONTAL, 0, 0);
@@ -190,6 +199,7 @@ public class PublishActivity extends AppCompatActivity {
     private View.OnClickListener itemsOnClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            backgroundAlpha(1f);
             menuWindow.dismiss();
             switch (v.getId()) {
                 // 拍照

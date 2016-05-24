@@ -16,7 +16,7 @@ import android.widget.TextView;
 /**
  * Created by huang zhen xi on 2016/4/28.
  */
-public class SaleDetailActivity extends AppCompatActivity {
+public class SaleDetailActivity extends XDtextbookGOActivity {
     private TextView title_text, old_price;
     private Button btn_back, btn_sendmsg;
     private ImageView back;

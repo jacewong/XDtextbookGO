@@ -26,7 +26,7 @@
 
     <string-array name="tab_items">
         <item>出售</item>
-        <item>发布</item>
+        <item> </item>
         <item>我的</item>
     </string-array>
 </resources>

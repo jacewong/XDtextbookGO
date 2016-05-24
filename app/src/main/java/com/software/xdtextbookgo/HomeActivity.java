@@ -41,7 +41,7 @@ import butterknife.Bind;
 /**
  * Created by huang on 2016/4/25.
  */
-public class HomeActivity extends AppCompatActivity{
+public class HomeActivity extends XDtextbookGOActivity{
     private Button btn_back;
     private ImageView back;
     private Spinner spinner_dept, spinner_grade;

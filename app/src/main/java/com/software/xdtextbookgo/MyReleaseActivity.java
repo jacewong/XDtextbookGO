@@ -16,7 +16,7 @@ import org.w3c.dom.Text;
 /**
  * Created by huang zhen xi on 2016/4/28.
  */
-public class MyReleaseActivity extends AppCompatActivity {
+public class MyReleaseActivity extends XDtextbookGOActivity {
     private TextView title_text;
     private Button btn_back;
     private ImageView back;
