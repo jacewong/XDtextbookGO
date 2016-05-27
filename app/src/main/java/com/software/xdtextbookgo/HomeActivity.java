@@ -83,6 +83,7 @@ public class HomeActivity extends XDtextbookGOActivity{
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 BookInfo bookInfo = infoList.get(position);
                 Intent intent = new Intent(HomeActivity.this, SaleDetailActivity.class);
+                intent.putExtra("book", bookInfo);
                 startActivity(intent);
             }
         });
@@ -204,8 +205,30 @@ public class HomeActivity extends XDtextbookGOActivity{
     }
 
     private void initBookInfo(){
-        BookInfo lisan = new BookInfo(R.drawable.test, "离散数学（第三版）", "方世昌","西安电子科技大学出版社","计算机学院","大二","￥20.00","全新");
-        BookInfo lisan1 = new BookInfo(R.drawable.test, "离散数学（第三版）", "方世昌","西安电子科技大学出版社", "计算机学院","大二","￥15.00","9成新");
+        BookInfo lisan = new BookInfo();
+        lisan.setImageId(R.drawable.test);
+        lisan.setAuthor_name("方世昌");
+        lisan.setBook_name("离散数学（第三版）");
+        lisan.setCount("1本");
+        lisan.setDept_name("计算机学院");
+        lisan.setGrade_name("大二");
+        lisan.setPublisher_name("西安电子科技大学出版社");
+        lisan.setXinjiu_name("全新");
+        lisan.setPrice_name("￥20.00");
+        lisan.setOri_price("￥36.00");
+
+        BookInfo lisan1 = new BookInfo();
+        lisan1.setImageId(R.drawable.test);
+        lisan1.setAuthor_name("方世昌");
+        lisan1.setBook_name("离散数学（第三版）");
+        lisan1.setCount("1本");
+        lisan1.setDept_name("计算机学院");
+        lisan1.setGrade_name("大二");
+        lisan1.setPublisher_name("西安电子科技大学出版社");
+        lisan1.setXinjiu_name("9成新");
+        lisan1.setPrice_name("￥15.00");
+        lisan1.setOri_price("￥36.00");
+
         infoList.add(lisan);
         infoList.add(lisan1);
     }

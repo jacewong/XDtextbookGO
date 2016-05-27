@@ -9,7 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import com.avos.avoscloud.AVUser;
 
 /**
- * Created by huang on 2016/5/23.
+ * Created by huang zhen xi on 2016/5/23.
+ *
  */
 public class XDtextbookGOActivity extends AppCompatActivity{
     public XDtextbookGOActivity activity;

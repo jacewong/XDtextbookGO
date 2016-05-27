@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.LogInCallback;
+import com.bumptech.glide.Glide;
 
 /**
  * Created by huang zhen xi on 2016/4/20.
@@ -32,6 +33,7 @@ public class LoginActivity extends XDtextbookGOActivity {
     private EditText et_name, et_pwd;
     private TextView title_text;
     private ProgressBar progressBar;
+    private ImageView add;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +46,18 @@ public class LoginActivity extends XDtextbookGOActivity {
       //  btn_back.setVisibility(Button.INVISIBLE);
        // back = (ImageView) this.findViewById(R.id.back);
        // back.setVisibility(View.INVISIBLE);
+
+        //********************************************
+        add = (ImageView) findViewById(R.id.add);
+        add.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View view){
+                Glide.with(add.getContext())
+                        .load("http://ac-ogpnedh1.clouddn.com/GOIjocgRRek2nqFugP7OQ43BTVZCUqiMNZik8Zuv")
+                        .fitCenter()
+                        .into(add);
+
+            }
+        });
 
         progressBar = createProgressBar(this,null);
         progressBar.setVisibility(View.INVISIBLE);
@@ -169,4 +183,7 @@ public class LoginActivity extends XDtextbookGOActivity {
         rootContainer.addView(progressBar);
         return progressBar;
     }
+
+
+
 }

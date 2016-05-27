@@ -57,7 +57,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="10dp"
-                android:text="离散数学（第二版）"
                 android:textSize="15sp" />
 
             <LinearLayout

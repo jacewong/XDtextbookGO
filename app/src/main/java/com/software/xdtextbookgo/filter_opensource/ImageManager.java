@@ -2,12 +2,22 @@ package com.software.xdtextbookgo.filter_opensource;
 
 
 import android.content.Context;
-        import android.net.Uri;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.NinePatchDrawable;
+import android.net.Uri;
         import android.widget.ImageView;
 
         import com.bumptech.glide.Glide;
 import com.software.xdtextbookgo.R;
 import com.software.xdtextbookgo.filter_opensource.GlideCircleTransform;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 
 /**
  * Created by sunfusheng on 16/4/6.
@@ -90,4 +100,22 @@ public class ImageManager {
                 .into(imageView);
     }
 
+
+    public Drawable bitmap2Drawable(Bitmap bitmap) {
+        return new BitmapDrawable(bitmap);
+    }
+
+    public byte[] Bitmap2Bytes(Bitmap bm) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        return baos.toByteArray();
+    }
+
+    public Bitmap Bytes2Bimap(byte[] b) {
+        if (b.length != 0) {
+            return BitmapFactory.decodeByteArray(b, 0, b.length);
+        } else {
+            return null;
+        }
+    }
 }

@@ -13,18 +13,22 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.software.xdtextbookgo.structure.BookInfo;
+
 /**
  * Created by huang zhen xi on 2016/4/28.
  */
 public class SaleDetailActivity extends XDtextbookGOActivity {
-    private TextView title_text, old_price;
+    private TextView book_name, author_name, publisher_name, show_dept, show_grade, new_price, show_xinjiu, show_count, old_price;
     private Button btn_back, btn_sendmsg;
-    private ImageView back;
+    private ImageView bookpic;
+    private BookInfo mbook;
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.saledetail_layout);
         inittoolbar();
+        mbook = (BookInfo) getIntent().getSerializableExtra("book");
         btn_sendmsg = (Button) this.findViewById(R.id.bt_sendmsg);
         btn_sendmsg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -34,9 +38,36 @@ public class SaleDetailActivity extends XDtextbookGOActivity {
             }
         });
 
+        book_name = (TextView) findViewById(R.id.book_name);
+        book_name.setText(mbook.getBook_name());
+
+        author_name = (TextView) findViewById(R.id.author_name);
+        author_name.setText(mbook.getAuthor_name());
+
+        publisher_name = (TextView) findViewById(R.id.publisher_name);
+        publisher_name.setText(mbook.getPublisher_name());
+
+        show_dept = (TextView) findViewById(R.id.show_dept);
+        show_dept.setText(mbook.getDept_name());
+
+        show_grade = (TextView) findViewById(R.id.show_grade);
+        show_grade.setText(mbook.getGrade_name());
+
+        new_price = (TextView) findViewById(R.id.new_price);
+        new_price.setText(mbook.getPrice_name());
+
+        show_xinjiu = (TextView) findViewById(R.id.show_xinjiu);
+        show_xinjiu.setText(mbook.getXinjiu_name());
+
+        show_count = (TextView) findViewById(R.id.show_count);
+        show_count.setText(mbook.getCount());
+
+        bookpic = (ImageView) findViewById(R.id.bookpicture);
+        bookpic.setImageResource(mbook.getImageId());
 
         old_price = (TextView) this.findViewById(R.id.old_price);
-        old_price.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG);  //文字中间加删除线
+        old_price.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG);//文字中间加删除线
+        old_price.setText(mbook.getOri_price());
 
 
 

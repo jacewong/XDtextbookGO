@@ -6,6 +6,7 @@ import com.avos.avoscloud.AVOSCloud;
 
 /**
  * Created by huang on 2016/5/23.
+ * 初始化接入账户的pid和key
  */
 public class XDtextbookGOApplication extends Application {
     @Override
