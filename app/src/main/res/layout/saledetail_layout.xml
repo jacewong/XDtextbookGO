@@ -34,22 +34,24 @@
 
             <ImageView
                 android:id="@+id/bookpicture"
-                android:layout_width="match_parent"
+                android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:adjustViewBounds="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 android:maxHeight="200.0dp"
                 android:maxWidth="200.0dp"
                 android:paddingLeft="10dp"
                 android:paddingBottom="10.0dp"
-                android:paddingTop="10.0dp"
-                android:src="@drawable/test" />
+                android:paddingTop="10.0dp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingLeft="10.0dp">
+            android:paddingLeft="10.0dp"
+            android:paddingTop="5.0dp">
 
             <TextView
                 android:id="@+id/book_name"
@@ -71,7 +73,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="10dp"
-                    android:text="方世昌"
                     android:textSize="10sp" />
 
                 <TextView
@@ -86,7 +87,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
-                    android:text="西安电子科技大学出版社"
                     android:textSize="10sp" />
             </LinearLayout>
 
@@ -103,7 +103,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="10dp"
-                    android:text="计算机学院"
                     android:textSize="13sp" />
 
                 <TextView
@@ -112,7 +111,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="10dp"
-                    android:text="大二"
                     android:textSize="13sp" />
             </LinearLayout>
 
@@ -128,7 +126,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="10dp"
-                    android:text="￥20.00"
                     android:textColor="#00b7e1"
                     android:textSize="18sp" />
 
@@ -138,7 +135,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="10dp"
-                    android:text="￥36.00"
                     android:textSize="10sp" />
             </LinearLayout>
 
@@ -155,7 +151,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="10dp"
-                    android:text="全新"
                     android:textSize="10sp" />
 
                 <TextView
@@ -164,7 +159,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="10dp"
-                    android:text="1本"
                     android:textSize="10sp" />
             </LinearLayout>
         </LinearLayout>

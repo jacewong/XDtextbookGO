@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.software.xdtextbookgo.R;
 import com.software.xdtextbookgo.structure.BookInfo;
 import com.software.xdtextbookgo.structure.Msg;
@@ -47,7 +48,12 @@ public class BookInfoAdapter extends ArrayAdapter<BookInfo> {
             view = convertView;
             viewHolder = (ViewHolder) view.getTag();
         }
-        viewHolder.bookpic.setImageResource(bookinfo.getImageId());
+
+        Glide.with(viewHolder.bookpic.getContext())
+                .load(bookinfo.getImageId())
+                .fitCenter()
+                .into(viewHolder.bookpic);
+        //viewHolder.bookpic.setImageResource(bookinfo.getImageId());
         viewHolder.bookname.setText(bookinfo.getBook_name());
         viewHolder.authorname.setText(bookinfo.getAuthor_name());
         viewHolder.publishername.setText(bookinfo.getPublisher_name());

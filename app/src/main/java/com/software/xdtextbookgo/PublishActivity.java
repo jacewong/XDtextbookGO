@@ -64,7 +64,7 @@ public class PublishActivity extends XDtextbookGOActivity {
     private static final int PHOTO_REQUEST_TAKEPHOTO = 1;// 拍照
     private static final int PHOTO_REQUEST_GALLERY = 2;// 从相册中选择
     private static final int PHOTO_REQUEST_CUT = 3;// 结果
-    File outputImage = new File(Environment.getExternalStorageDirectory(),"output_image.png");
+    File outputImage = new File(Environment.getExternalStorageDirectory(),"output_image.jpg");
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = PublishActivity.this;
@@ -189,7 +189,7 @@ public class PublishActivity extends XDtextbookGOActivity {
          progressBar.setVisibility(View.VISIBLE);
             AVUser user = AVUser.getCurrentUser();
             try{
-               final AVFile file = AVFile.withAbsoluteLocalPath("output_image.png", Environment.getExternalStorageDirectory() + "/output_image.png");
+               final AVFile file = AVFile.withAbsoluteLocalPath("output_image.jpg", Environment.getExternalStorageDirectory() + "/output_image.jpg");
                 file.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(AVException e) {
@@ -339,7 +339,7 @@ public class PublishActivity extends XDtextbookGOActivity {
                         // TODO Auto-generated method stub
                         dialog.dismiss();
                         Intent intent = new Intent(Intent.ACTION_PICK, null);
-                        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,"image/png");
+                        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,"image/*");
                         startActivityForResult(intent, PHOTO_REQUEST_GALLERY);
                     }
                 }).show();
@@ -371,7 +371,7 @@ public class PublishActivity extends XDtextbookGOActivity {
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(uri, "image/*");
         // crop为true是设置在开启的intent中设置显示的view可以剪裁
-        intent.putExtra("crop", "true");
+        intent.putExtra("crop", "view");
 
         // aspectX aspectY 是宽高的比例
         intent.putExtra("aspectX", 1);

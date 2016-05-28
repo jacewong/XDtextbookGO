@@ -11,19 +11,24 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="110dp" />
+            android:layout_height="102dp" />
 
-        <ListView
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:id="@+id/swipeLayout" >
+        <com.software.xdtextbookgo.LodingmoreRecyclerView.HaoRecyclerView
             android:id="@+id/honme_list"
             android:layout_width="match_parent"
-            android:layout_height="400dp"
-            android:layout_gravity="bottom"
+            android:layout_height="wrap_content"
+            android:paddingBottom="50dp"
             android:divider="#0000"
             android:dividerHeight="8dp"
             android:fadingEdge="none"
             android:overScrollMode="never"
             android:scrollbars="none" />
-
+</android.support.v4.widget.SwipeRefreshLayout>
     </LinearLayout>
 
     <LinearLayout

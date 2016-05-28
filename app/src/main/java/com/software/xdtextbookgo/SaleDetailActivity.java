@@ -13,13 +13,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.software.xdtextbookgo.structure.BookInfo;
 
 /**
  * Created by huang zhen xi on 2016/4/28.
  */
 public class SaleDetailActivity extends XDtextbookGOActivity {
-    private TextView book_name, author_name, publisher_name, show_dept, show_grade, new_price, show_xinjiu, show_count, old_price;
+    private TextView book_name, author_name, publisher_name, show_dept, show_grade, new_price, show_xinjiu, show_count, old_price, user_text;
     private Button btn_back, btn_sendmsg;
     private ImageView bookpic;
     private BookInfo mbook;
@@ -34,9 +35,13 @@ public class SaleDetailActivity extends XDtextbookGOActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SaleDetailActivity.this, MessageActivity.class);
+                intent.putExtra("user", mbook.getUser());
                 startActivity(intent);
             }
         });
+
+        user_text = (TextView) findViewById(R.id.user_text);
+        user_text.setText(mbook.getUser());
 
         book_name = (TextView) findViewById(R.id.book_name);
         book_name.setText(mbook.getBook_name());
@@ -63,7 +68,11 @@ public class SaleDetailActivity extends XDtextbookGOActivity {
         show_count.setText(mbook.getCount());
 
         bookpic = (ImageView) findViewById(R.id.bookpicture);
-        bookpic.setImageResource(mbook.getImageId());
+        Glide.with(bookpic.getContext())
+                .load(mbook.getImageId())
+                .fitCenter()
+                .into(bookpic);
+     //   bookpic.setImageResource(mbook.getImageId());
 
         old_price = (TextView) this.findViewById(R.id.old_price);
         old_price.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG);//文字中间加删除线

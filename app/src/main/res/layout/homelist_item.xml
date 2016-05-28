@@ -21,15 +21,14 @@
 
             <ImageView
                 android:id="@+id/bookpic_list"
-                android:layout_width="match_parent"
+                android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:adjustViewBounds="true"
                 android:maxHeight="150.0dp"
                 android:maxWidth="150.0dp"
                 android:paddingLeft="10dp"
                 android:paddingBottom="10.0dp"
-                android:paddingTop="10.0dp"
-                android:src="@drawable/addpic" />
+                android:paddingTop="10.0dp" />
         </LinearLayout>
 
         <LinearLayout

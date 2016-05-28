@@ -49,15 +49,18 @@ public class LoginActivity extends XDtextbookGOActivity {
 
         //********************************************
         add = (ImageView) findViewById(R.id.add);
-        add.setOnClickListener(new View.OnClickListener(){
+        Glide.with(add.getContext())
+                .load("http://ac-ogpnedh1.clouddn.com/qqdIKsuQ0hLD7bQq00O2BIhCBV84DpcMjMi64TYs")
+                .into(add);
+  /*      add.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view){
                 Glide.with(add.getContext())
-                        .load("http://ac-ogpnedh1.clouddn.com/GOIjocgRRek2nqFugP7OQ43BTVZCUqiMNZik8Zuv")
+                        .load("http://ac-ogpnedh1.clouddn.com/7TBCZAyVBkLsZDlW3vaCvwkB85u1uqiz0DtAaPsH")
                         .fitCenter()
                         .into(add);
 
             }
-        });
+        });  */
 
         progressBar = createProgressBar(this,null);
         progressBar.setVisibility(View.INVISIBLE);

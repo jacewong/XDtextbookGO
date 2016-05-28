@@ -6,11 +6,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,7 +29,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 
-
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.FindCallback;
+import com.software.xdtextbookgo.LodingmoreRecyclerView.HaoRecyclerView;
 import com.software.xdtextbookgo.adapter.BookInfoAdapter;
 import com.software.xdtextbookgo.filter_opensource.FilterData;
 import com.software.xdtextbookgo.filter_opensource.FilterView;
@@ -60,12 +67,77 @@ public class HomeActivity extends XDtextbookGOActivity{
     private Toolbar toolbar;
     private boolean isStickyTop = true; // 是否吸附在顶部
 
+    private HaoRecyclerView hao_recycleview;
+
 
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_layout);
         inittoolbar();
 
+        final BookInfoAdapter adapter = new BookInfoAdapter(HomeActivity.this,R.layout.homelist_item,infoList);
+        //final ListView listView = (ListView) findViewById(R.id.honme_list);
+
+        final SwipeRefreshLayout swipeView = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
+        swipeView.setColorSchemeResources(R.color.anotherblue, R.color.anotherblue, R.color.anotherblue,
+                R.color.anotherblue);
+        swipeView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeView.setRefreshing(true);
+                Log.e("tag", "刷新....");
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        infoList.clear();
+
+                        AVQuery<AVObject> query = new AVQuery<AVObject>("SaleInfo");
+                        query.orderByDescending("updatedAt");//按照时间降序
+                        query.setLimit(6);//最大10个
+                        query.findInBackground(new FindCallback<AVObject>() {
+                            @Override
+                            public void done(List<AVObject> list, AVException e) {
+                                if(list != null){
+                                    for(AVObject av:list)
+                                    {
+                                        BookInfo bookInfo = new BookInfo();
+                                        bookInfo.setOri_price(av.getString("oriPrice"));
+                                        bookInfo.setPrice_name(av.getString("price"));
+                                        bookInfo.setXinjiu_name(av.getString("xinjiu"));
+                                        bookInfo.setPublisher_name(av.getString("publisher"));
+                                        bookInfo.setGrade_name(av.getString("grade"));
+                                        bookInfo.setAuthor_name(av.getString("author"));
+                                        bookInfo.setBook_name(av.getString("bookName"));
+                                        bookInfo.setDept_name(av.getString("dept"));
+                                        bookInfo.setCount(av.getString("count"));
+                                        bookInfo.setPublish_user(av.getString("userName"));
+                                        bookInfo.setImageId(av.getAVFile("picture").getUrl());
+                                        Log.e("tag", av.getAVFile("picture").getUrl());
+                                        infoList.add(bookInfo);
+                                    }
+                                    listView.setAdapter(adapter);
+                                    swipeView.setRefreshing(false);
+                                    adapter.notifyDataSetChanged();
+                                }
+                                else{
+                                    swipeView.setRefreshing(false);
+                                    adapter.notifyDataSetChanged();
+                                    showError(activity.getString(R.string.network_error));
+                                    Log.e("tag114", e.getCode()+"");
+                                }
+                            }
+                        });
+                    }
+                }).start();
+
+                /*  (new Handler()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeView.setRefreshing(false);
+                    }
+                }, 3000);   */
+            }
+        });
 
         //@Bind(R.id.fv_top_filter)
         fvTopFilter = (FilterView) findViewById(R.id.fv_top_filter);
@@ -75,8 +147,6 @@ public class HomeActivity extends XDtextbookGOActivity{
 
 
         initBookInfo();
-        BookInfoAdapter adapter = new BookInfoAdapter(HomeActivity.this,R.layout.homelist_item,infoList);
-        ListView listView = (ListView) findViewById(R.id.honme_list);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -206,7 +276,7 @@ public class HomeActivity extends XDtextbookGOActivity{
 
     private void initBookInfo(){
         BookInfo lisan = new BookInfo();
-        lisan.setImageId(R.drawable.test);
+        lisan.setImageId("http://ac-ogpnedh1.clouddn.com/qqdIKsuQ0hLD7bQq00O2BIhCBV84DpcMjMi64TYs");
         lisan.setAuthor_name("方世昌");
         lisan.setBook_name("离散数学（第三版）");
         lisan.setCount("1本");
@@ -216,20 +286,20 @@ public class HomeActivity extends XDtextbookGOActivity{
         lisan.setXinjiu_name("全新");
         lisan.setPrice_name("￥20.00");
         lisan.setOri_price("￥36.00");
+        infoList.add(lisan);
+
 
         BookInfo lisan1 = new BookInfo();
-        lisan1.setImageId(R.drawable.test);
+        lisan1.setImageId("http://ac-ogpnedh1.clouddn.com/qqdIKsuQ0hLD7bQq00O2BIhCBV84DpcMjMi64TYs");
         lisan1.setAuthor_name("方世昌");
+        lisan1.setPrice_name("￥15.00");
+        lisan1.setOri_price("￥36.00");
         lisan1.setBook_name("离散数学（第三版）");
         lisan1.setCount("1本");
         lisan1.setDept_name("计算机学院");
         lisan1.setGrade_name("大二");
         lisan1.setPublisher_name("西安电子科技大学出版社");
         lisan1.setXinjiu_name("9成新");
-        lisan1.setPrice_name("￥15.00");
-        lisan1.setOri_price("￥36.00");
-
-        infoList.add(lisan);
         infoList.add(lisan1);
     }
 }

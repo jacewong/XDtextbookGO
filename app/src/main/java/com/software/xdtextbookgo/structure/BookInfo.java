@@ -1,14 +1,15 @@
 package com.software.xdtextbookgo.structure;
 
 import java.io.Serializable;
+import java.net.URL;
 
 /**
  * Created by huang zhen xi on 2016/4/29.
  * 主页显示书籍信息的实体类，作为home_listview的适配类型
  */
 public class BookInfo implements Serializable {
-    private int imageId;
-    private  String book_name;
+    private String imageId;
+    private String book_name;
     private String author_name;
     private String publisher_name;
     private String dept_name;
@@ -17,10 +18,12 @@ public class BookInfo implements Serializable {
     private String price_name;
     private String xinjiu_name;
     private String count;
+    private String publish_user;
 
+    public String getUser(){return publish_user;}
     public String getCount(){return count;}
 
-    public int getImageId(){
+    public String getImageId(){
         return imageId;
     }
 
@@ -56,7 +59,7 @@ public class BookInfo implements Serializable {
 
     public void setCount(String count){this.count = count;}
 
-    public void setImageId(int imageId){
+    public void setImageId(String imageId){
         this.imageId = imageId;
     }
 
@@ -84,6 +87,7 @@ public class BookInfo implements Serializable {
 
     public void setPublisher_name(String publisher_name) {this.publisher_name = publisher_name;
     }
+    public void setPublish_user(String publish_user){this.publish_user = publish_user;}
 
     public void setXinjiu_name(String xinjiu_name) {
         this.xinjiu_name = xinjiu_name;

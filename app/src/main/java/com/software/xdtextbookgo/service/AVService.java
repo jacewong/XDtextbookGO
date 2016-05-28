@@ -33,10 +33,10 @@ public class AVService {
         object.put("bookName", bookName);
         object.put("author", author);
         object.put("publisher",publisher);
-        object.put("oriPrice", oriPrice);
+        object.put("oriPrice","￥"+ oriPrice + ".00");
         object.put("dept", dept);
         object.put("grade", grade);
-        object.put("price", "￥"+ price);
+        object.put("price", "￥"+ price + ".00");
         object.put("count", count +"本");
         object.put("xinjiu", xinjiu);
         object.saveInBackground(saveCallback);

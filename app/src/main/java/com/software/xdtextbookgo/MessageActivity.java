@@ -30,10 +30,12 @@ public class MessageActivity extends XDtextbookGOActivity {
     private EditText inputText;
     private MsgAdapter adapter;
     private List<Msg> msgList = new ArrayList<Msg>();
+    private  String user;
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.message_layout);
+        user = getIntent().getStringExtra("user");
         inittoolbar();
   /*      title_text = (TextView) this.findViewById(R.id.title_text);
         title_text.setText("User name");
@@ -45,6 +47,8 @@ public class MessageActivity extends XDtextbookGOActivity {
                 MessageActivity.this.finish();
             }
         });  */
+
+
 
         initMsgs();
         adapter = new MsgAdapter(MessageActivity.this, R.layout.msg_item, msgList);
@@ -68,7 +72,7 @@ public class MessageActivity extends XDtextbookGOActivity {
     private void inittoolbar()
     {
         TextView title = (TextView) findViewById(R.id.title_text);
-        title.setText("User name");
+        title.setText(user);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);

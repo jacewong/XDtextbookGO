@@ -29,15 +29,14 @@
         <ImageView
             android:id="@+id/add"
             android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:layout_centerInParent="true"
             android:gravity="center"
             android:maxHeight="200.0dp"
-            android:maxWidth="200.0dp"
-            android:background="@drawable/addpic" />
+            android:maxWidth="200.0dp" />
 
     </RelativeLayout>
 
