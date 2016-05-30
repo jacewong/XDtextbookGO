@@ -39,20 +39,12 @@ public class LoginActivity extends XDtextbookGOActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_layout);
         inittoolbar();
-       // title_text = (TextView) this.findViewById(R.id.title_text);
-       // title_text.setText("登录界面");
-        //隐藏返回按钮
-       // btn_back = (Button) this.findViewById(R.id.title_back);
-      //  btn_back.setVisibility(Button.INVISIBLE);
-       // back = (ImageView) this.findViewById(R.id.back);
-       // back.setVisibility(View.INVISIBLE);
-
-        //********************************************
-        add = (ImageView) findViewById(R.id.add);
+        //********************************************测试Glide所用
+      /*  add = (ImageView) findViewById(R.id.add);
         Glide.with(add.getContext())
                 .load("http://ac-ogpnedh1.clouddn.com/qqdIKsuQ0hLD7bQq00O2BIhCBV84DpcMjMi64TYs")
                 .into(add);
-  /*      add.setOnClickListener(new View.OnClickListener(){
+        add.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view){
                 Glide.with(add.getContext())
                         .load("http://ac-ogpnedh1.clouddn.com/7TBCZAyVBkLsZDlW3vaCvwkB85u1uqiz0DtAaPsH")
