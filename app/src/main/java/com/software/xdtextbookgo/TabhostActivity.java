@@ -2,18 +2,17 @@ package com.software.xdtextbookgo;
 
 import android.app.TabActivity;
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
+
+import com.software.xdtextbookgo.structure.EnumTabInfo;
 
 /**
  * Created by huang zhen xi on 2016/4/25.

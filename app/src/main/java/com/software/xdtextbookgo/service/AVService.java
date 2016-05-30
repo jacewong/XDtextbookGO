@@ -2,7 +2,9 @@ package com.software.xdtextbookgo.service;
 
 import com.avos.avoscloud.AVFile;
 import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.FindCallback;
 import com.avos.avoscloud.SaveCallback;
 import com.avos.avoscloud.SignUpCallback;
 
@@ -32,14 +34,28 @@ public class AVService {
         object.put("picture", file);
         object.put("bookName", bookName);
         object.put("author", author);
-        object.put("publisher",publisher);
-        object.put("oriPrice","￥"+ oriPrice + ".00");
+        object.put("publisher", publisher);
+        object.put("oriPrice", "￥" + oriPrice + ".00");
         object.put("dept", dept);
         object.put("grade", grade);
-        object.put("price", "￥"+ price + ".00");
-        object.put("count", count +"本");
+        object.put("price", "￥" + price + ".00");
+        object.put("count", count + "本");
         object.put("xinjiu", xinjiu);
         object.saveInBackground(saveCallback);
+    }
 
+    public static void refreshQuery(int count_query,FindCallback findCallback){
+        AVQuery<AVObject> query = new AVQuery<AVObject>("SaleInfo");
+        query.orderByDescending("updatedAt");//按照时间降序
+        query.setLimit(count_query);//最大6个
+        query.findInBackground(findCallback);
+    }
+
+    public static void loadQuery(FindCallback findCallback){
+        AVQuery<AVObject> query = new AVQuery<AVObject>("SaleInfo");
+        query.orderByDescending("updatedAt");//按照时间降序
+        //query.setLimit(6);//最大6个
+        //query.skip(count);
+        query.findInBackground(findCallback);
     }
 }

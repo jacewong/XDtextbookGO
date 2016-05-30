@@ -18,15 +18,15 @@
         android:layout_height="151dp"
         android:orientation="vertical">
 
-     <!--   <TextView
+       <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:gravity="center"
             android:text="Welcome"
             android:textSize="30sp"
-            android:textColor="#000000"/>  -->
-        <ImageView
+            android:textColor="#000000"/>
+   <!--     <ImageView
             android:id="@+id/add"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
             android:layout_centerInParent="true"
             android:gravity="center"
             android:maxHeight="200.0dp"
-            android:maxWidth="200.0dp" />
+            android:maxWidth="200.0dp" />-->
 
     </RelativeLayout>
 

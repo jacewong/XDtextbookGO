@@ -1,8 +1,13 @@
-package com.software.xdtextbookgo;
+package com.software.xdtextbookgo.structure;
 
 /**
  * Created by huang zhen xi on 2016/4/25.
  */
+
+import com.software.xdtextbookgo.HomeActivity;
+import com.software.xdtextbookgo.PersonalActivity;
+import com.software.xdtextbookgo.R;
+
 /**
  * 出售
  * 发布
@@ -35,7 +40,7 @@ public enum EnumTabInfo {
      * @return
      */
     public static EnumTabInfo getTabInfoByIndex(int index) {
-        EnumTabInfo[] values = EnumTabInfo.values();
+        EnumTabInfo[] values = values();
         for (int i = 0; i < values.length; i++) {
             if (index == values[i].index)
                 return values[i];

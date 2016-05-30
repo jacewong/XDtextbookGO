@@ -11,6 +11,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -33,27 +34,27 @@ import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.FindCallback;
-import com.software.xdtextbookgo.LodingmoreRecyclerView.HaoRecyclerView;
 import com.software.xdtextbookgo.adapter.BookInfoAdapter;
 import com.software.xdtextbookgo.filter_opensource.FilterData;
 import com.software.xdtextbookgo.filter_opensource.FilterView;
 import com.software.xdtextbookgo.filter_opensource.ModelUtil;
+import com.software.xdtextbookgo.service.AVService;
+import com.software.xdtextbookgo.service.DividerLine;
+import com.software.xdtextbookgo.service.ProgressView;
 import com.software.xdtextbookgo.structure.BookInfo;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
+import me.fangx.haorefresh.HaoRecyclerView;
+import me.fangx.haorefresh.LoadMoreListener;
 
 /**
  * Created by huang on 2016/4/25.
  */
 public class HomeActivity extends XDtextbookGOActivity{
-    private Button btn_back;
-    private ImageView back;
-    private Spinner spinner_dept, spinner_grade;
-    private TextView title_text;
-    private List<BookInfo> infoList = new ArrayList<BookInfo>();
+    private ArrayList<BookInfo> infoList = new ArrayList<BookInfo>();
 
 //filter属性初始化
   //  @Bind(R.id.fv_top_filter)
@@ -68,76 +69,15 @@ public class HomeActivity extends XDtextbookGOActivity{
     private boolean isStickyTop = true; // 是否吸附在顶部
 
     private HaoRecyclerView hao_recycleview;
+    private BookInfoAdapter adapter;
+    private SwipeRefreshLayout swipeView;
 
 
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_layout);
         inittoolbar();
-
-        final BookInfoAdapter adapter = new BookInfoAdapter(HomeActivity.this,R.layout.homelist_item,infoList);
-        //final ListView listView = (ListView) findViewById(R.id.honme_list);
-
-        final SwipeRefreshLayout swipeView = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
-        swipeView.setColorSchemeResources(R.color.anotherblue, R.color.anotherblue, R.color.anotherblue,
-                R.color.anotherblue);
-        swipeView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                swipeView.setRefreshing(true);
-                Log.e("tag", "刷新....");
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        infoList.clear();
-
-                        AVQuery<AVObject> query = new AVQuery<AVObject>("SaleInfo");
-                        query.orderByDescending("updatedAt");//按照时间降序
-                        query.setLimit(6);//最大10个
-                        query.findInBackground(new FindCallback<AVObject>() {
-                            @Override
-                            public void done(List<AVObject> list, AVException e) {
-                                if(list != null){
-                                    for(AVObject av:list)
-                                    {
-                                        BookInfo bookInfo = new BookInfo();
-                                        bookInfo.setOri_price(av.getString("oriPrice"));
-                                        bookInfo.setPrice_name(av.getString("price"));
-                                        bookInfo.setXinjiu_name(av.getString("xinjiu"));
-                                        bookInfo.setPublisher_name(av.getString("publisher"));
-                                        bookInfo.setGrade_name(av.getString("grade"));
-                                        bookInfo.setAuthor_name(av.getString("author"));
-                                        bookInfo.setBook_name(av.getString("bookName"));
-                                        bookInfo.setDept_name(av.getString("dept"));
-                                        bookInfo.setCount(av.getString("count"));
-                                        bookInfo.setPublish_user(av.getString("userName"));
-                                        bookInfo.setImageId(av.getAVFile("picture").getUrl());
-                                        Log.e("tag", av.getAVFile("picture").getUrl());
-                                        infoList.add(bookInfo);
-                                    }
-                                    listView.setAdapter(adapter);
-                                    swipeView.setRefreshing(false);
-                                    adapter.notifyDataSetChanged();
-                                }
-                                else{
-                                    swipeView.setRefreshing(false);
-                                    adapter.notifyDataSetChanged();
-                                    showError(activity.getString(R.string.network_error));
-                                    Log.e("tag114", e.getCode()+"");
-                                }
-                            }
-                        });
-                    }
-                }).start();
-
-                /*  (new Handler()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        swipeView.setRefreshing(false);
-                    }
-                }, 3000);   */
-            }
-        });
+        initRecyclerView();
 
         //@Bind(R.id.fv_top_filter)
         fvTopFilter = (FilterView) findViewById(R.id.fv_top_filter);
@@ -145,18 +85,6 @@ public class HomeActivity extends XDtextbookGOActivity{
         initFilterView();
         initFilterListener();
 
-
-        initBookInfo();
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                BookInfo bookInfo = infoList.get(position);
-                Intent intent = new Intent(HomeActivity.this, SaleDetailActivity.class);
-                intent.putExtra("book", bookInfo);
-                startActivity(intent);
-            }
-        });
     }
 
     private void inittoolbar()
@@ -168,6 +96,7 @@ public class HomeActivity extends XDtextbookGOActivity{
         setSupportActionBar(toolbar);
         toolbar.setOnMenuItemClickListener(onMenuItemClick);
     }
+
 //弹窗实现搜索
     private Toolbar.OnMenuItemClickListener onMenuItemClick = new Toolbar.OnMenuItemClickListener() {
         @Override
@@ -220,6 +149,103 @@ public class HomeActivity extends XDtextbookGOActivity{
         textView.setTextSize(15);     */
 
         return true;
+    }
+
+    private void initRecyclerView(){
+        adapter = new BookInfoAdapter(infoList);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        hao_recycleview = (HaoRecyclerView) findViewById(R.id.home_list);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        hao_recycleview.setLayoutManager(layoutManager);
+
+        //分割线设置
+        DividerLine dividerLine = new DividerLine(DividerLine.VERTICAL);
+        dividerLine.setSize(3);
+        dividerLine.setColor(0xFFDDDDDD);
+        hao_recycleview.addItemDecoration(dividerLine);
+
+
+        swipeView = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
+        swipeView.setColorSchemeResources(R.color.anotherblue, R.color.anotherblue, R.color.anotherblue,
+                R.color.anotherblue);
+        swipeView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        initBookInfo();
+                    }
+                }).start();
+            }
+        });
+
+        //设置自定义加载中和到底了效果
+        ProgressView progressView = new ProgressView(this);
+        progressView.setIndicatorId(ProgressView.BallPulse);
+        progressView.setIndicatorColor(0xff69b3e0);
+        hao_recycleview.setFootLoadingView(progressView);
+
+        TextView textView = new TextView(this);
+        textView.setText("已经到底啦~");
+        hao_recycleview.setFootEndView(textView);
+
+
+
+        hao_recycleview.setLoadMoreListener(new LoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        final int count = adapter.getItemCount();
+                        Log.e("pos", count + "");
+
+                        FindCallback findCallback = new FindCallback<AVObject>() {
+                            @Override
+                            public void done(List<AVObject> list, AVException e) {
+                                if (list != null) {
+                                    Log.e("size", list.size() + "");
+                                    if (count == list.size()) {
+                                        hao_recycleview.loadMoreEnd();
+                                        return;
+                                    }
+                                    for (int i = count; i < list.size(); i++) {
+                                        if (i == count + 6) {
+                                            break;
+                                        }
+                                        AVObject av = list.get(i);
+                                        getDownloadData(list, av);
+                                    }
+                                    swipeView.setRefreshing(false);
+                                    adapter.notifyDataSetChanged();
+                                    hao_recycleview.loadMoreComplete();
+                                } else {
+                                    swipeView.setRefreshing(false);
+                                    adapter.notifyDataSetChanged();
+                                    showError(activity.getString(R.string.network_error));
+                                    Log.e("tag114", e.getCode() + "");
+                                }
+                            }
+                        };
+                        AVService.loadQuery(findCallback);
+                    }
+                }).start();
+            }
+        });
+
+        initBookInfo();
+        hao_recycleview.setAdapter(adapter);
+        hao_recycleview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                BookInfo bookInfo = infoList.get(position);
+                Intent intent = new Intent(HomeActivity.this, SaleDetailActivity.class);
+                intent.putExtra("book", bookInfo);
+                startActivity(intent);
+            }
+        });
     }
 
     //filter数据与点击事件
@@ -275,31 +301,42 @@ public class HomeActivity extends XDtextbookGOActivity{
     }
 
     private void initBookInfo(){
-        BookInfo lisan = new BookInfo();
-        lisan.setImageId("http://ac-ogpnedh1.clouddn.com/qqdIKsuQ0hLD7bQq00O2BIhCBV84DpcMjMi64TYs");
-        lisan.setAuthor_name("方世昌");
-        lisan.setBook_name("离散数学（第三版）");
-        lisan.setCount("1本");
-        lisan.setDept_name("计算机学院");
-        lisan.setGrade_name("大二");
-        lisan.setPublisher_name("西安电子科技大学出版社");
-        lisan.setXinjiu_name("全新");
-        lisan.setPrice_name("￥20.00");
-        lisan.setOri_price("￥36.00");
-        infoList.add(lisan);
+        swipeView.setRefreshing(true);
+        infoList.clear();
+        FindCallback findCallback = new FindCallback<AVObject>() {
+            @Override
+            public void done(List<AVObject> list, AVException e) {
+                if (list != null) {
+                    for (AVObject av : list) {
+                        getDownloadData(list, av);
+                    }
+                    hao_recycleview.refreshComplete();
+                    swipeView.setRefreshing(false);
+                    adapter.notifyDataSetChanged();
+                } else {
+                    swipeView.setRefreshing(false);
+                    adapter.notifyDataSetChanged();
+                    showError(activity.getString(R.string.network_error));
+                    Log.e("tag114", e.getCode() + "");
+                }
+            }
+        };
+        AVService.refreshQuery(6, findCallback);
+    }
 
-
-        BookInfo lisan1 = new BookInfo();
-        lisan1.setImageId("http://ac-ogpnedh1.clouddn.com/qqdIKsuQ0hLD7bQq00O2BIhCBV84DpcMjMi64TYs");
-        lisan1.setAuthor_name("方世昌");
-        lisan1.setPrice_name("￥15.00");
-        lisan1.setOri_price("￥36.00");
-        lisan1.setBook_name("离散数学（第三版）");
-        lisan1.setCount("1本");
-        lisan1.setDept_name("计算机学院");
-        lisan1.setGrade_name("大二");
-        lisan1.setPublisher_name("西安电子科技大学出版社");
-        lisan1.setXinjiu_name("9成新");
-        infoList.add(lisan1);
+    private void getDownloadData(List<AVObject> list, AVObject av){
+        BookInfo bookInfo = new BookInfo();
+        bookInfo.setOri_price(av.getString("oriPrice"));
+        bookInfo.setPrice_name(av.getString("price"));
+        bookInfo.setXinjiu_name(av.getString("xinjiu"));
+        bookInfo.setPublisher_name(av.getString("publisher"));
+        bookInfo.setGrade_name(av.getString("grade"));
+        bookInfo.setAuthor_name(av.getString("author"));
+        bookInfo.setBook_name(av.getString("bookName"));
+        bookInfo.setDept_name(av.getString("dept"));
+        bookInfo.setCount(av.getString("count"));
+        bookInfo.setPublish_user(av.getString("userName"));
+        bookInfo.setImageId(av.getAVFile("picture").getUrl());
+        infoList.add(bookInfo);
     }
 }
