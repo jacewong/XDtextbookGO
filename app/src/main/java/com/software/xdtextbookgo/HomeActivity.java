@@ -1,21 +1,14 @@
 package com.software.xdtextbookgo;
 
 import android.app.Activity;
-import android.app.SearchManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,31 +17,24 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
-import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.FindCallback;
 import com.software.xdtextbookgo.adapter.BookInfoAdapter;
 import com.software.xdtextbookgo.filter_opensource.FilterData;
 import com.software.xdtextbookgo.filter_opensource.FilterView;
 import com.software.xdtextbookgo.filter_opensource.ModelUtil;
 import com.software.xdtextbookgo.service.AVService;
-import com.software.xdtextbookgo.service.DividerLine;
-import com.software.xdtextbookgo.service.ProgressView;
-import com.software.xdtextbookgo.structure.BookInfo;
+import com.software.xdtextbookgo.views.DividerLine;
+import com.software.xdtextbookgo.views.ProgressView;
+import com.software.xdtextbookgo.model.BookInfo;
+import com.software.xdtextbookgo.views.PullLoadMoreRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import butterknife.Bind;
-import me.fangx.haorefresh.HaoRecyclerView;
-import me.fangx.haorefresh.LoadMoreListener;
 
 /**
  * Created by huang on 2016/4/25.
@@ -68,9 +54,9 @@ public class HomeActivity extends XDtextbookGOActivity{
     private Toolbar toolbar;
     private boolean isStickyTop = true; // 是否吸附在顶部
 
-    private HaoRecyclerView hao_recycleview;
+
+    private PullLoadMoreRecyclerView mPullLoadMoreRecyclerView;
     private BookInfoAdapter adapter;
-    private SwipeRefreshLayout swipeView;
 
 
     protected void onCreate(Bundle savedInstanceState){
@@ -153,25 +139,22 @@ public class HomeActivity extends XDtextbookGOActivity{
 
     private void initRecyclerView(){
         adapter = new BookInfoAdapter(infoList);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        hao_recycleview = (HaoRecyclerView) findViewById(R.id.home_list);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        hao_recycleview.setLayoutManager(layoutManager);
+        mPullLoadMoreRecyclerView = (PullLoadMoreRecyclerView) findViewById(R.id.pullLoadMoreRecyclerView);
+        mPullLoadMoreRecyclerView.setLinearLayout();
 
-        //分割线设置
+    /*    //分割线设置
         DividerLine dividerLine = new DividerLine(DividerLine.VERTICAL);
         dividerLine.setSize(3);
         dividerLine.setColor(0xFFDDDDDD);
-        hao_recycleview.addItemDecoration(dividerLine);
+        hao_recycleview.addItemDecoration(dividerLine);  */
 
 
-        swipeView = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
-        swipeView.setColorSchemeResources(R.color.anotherblue, R.color.anotherblue, R.color.anotherblue,
+        mPullLoadMoreRecyclerView.setColorSchemeResources(R.color.anotherblue, R.color.anotherblue, R.color.anotherblue,
                 R.color.anotherblue);
-        swipeView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+        mPullLoadMoreRecyclerView.setOnPullLoadMoreListener(new PullLoadMoreRecyclerView.PullLoadMoreListener() {
             @Override
             public void onRefresh() {
-
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -179,21 +162,7 @@ public class HomeActivity extends XDtextbookGOActivity{
                     }
                 }).start();
             }
-        });
 
-        //设置自定义加载中和到底了效果
-        ProgressView progressView = new ProgressView(this);
-        progressView.setIndicatorId(ProgressView.BallPulse);
-        progressView.setIndicatorColor(0xff69b3e0);
-        hao_recycleview.setFootLoadingView(progressView);
-
-        TextView textView = new TextView(this);
-        textView.setText("已经到底啦~");
-        hao_recycleview.setFootEndView(textView);
-
-
-
-        hao_recycleview.setLoadMoreListener(new LoadMoreListener() {
             @Override
             public void onLoadMore() {
                 new Thread(new Runnable() {
@@ -208,7 +177,7 @@ public class HomeActivity extends XDtextbookGOActivity{
                                 if (list != null) {
                                     Log.e("size", list.size() + "");
                                     if (count == list.size()) {
-                                        hao_recycleview.loadMoreEnd();
+                                        mPullLoadMoreRecyclerView.setPullLoadMoreCompleted();
                                         return;
                                     }
                                     for (int i = count; i < list.size(); i++) {
@@ -218,11 +187,9 @@ public class HomeActivity extends XDtextbookGOActivity{
                                         AVObject av = list.get(i);
                                         getDownloadData(list, av);
                                     }
-                                    swipeView.setRefreshing(false);
                                     adapter.notifyDataSetChanged();
-                                    hao_recycleview.loadMoreComplete();
+                                    mPullLoadMoreRecyclerView.setPullLoadMoreCompleted();
                                 } else {
-                                    swipeView.setRefreshing(false);
                                     adapter.notifyDataSetChanged();
                                     showError(activity.getString(R.string.network_error));
                                     Log.e("tag114", e.getCode() + "");
@@ -232,18 +199,24 @@ public class HomeActivity extends XDtextbookGOActivity{
                         AVService.loadQuery(findCallback);
                     }
                 }).start();
+
             }
         });
 
+
+
         initBookInfo();
-        hao_recycleview.setAdapter(adapter);
-        hao_recycleview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+        mPullLoadMoreRecyclerView.setAdapter(adapter);
+        adapter.setOnItemClickLitener(new BookInfoAdapter.OnItemClickLitener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                BookInfo bookInfo = infoList.get(position);
-                Intent intent = new Intent(HomeActivity.this, SaleDetailActivity.class);
-                intent.putExtra("book", bookInfo);
-                startActivity(intent);
+            public void onItemClick(View view, int position) {
+                if (position < infoList.size()) {
+                    BookInfo bookInfo = infoList.get(position);
+                    Intent intent = new Intent(HomeActivity.this, SaleDetailActivity.class);
+                    intent.putExtra("book", bookInfo);
+                    startActivity(intent);
+                }
             }
         });
     }
@@ -266,6 +239,7 @@ public class HomeActivity extends XDtextbookGOActivity{
         fvTopFilter.setFilterData(mActivity, filterData);
 
     }
+
     private void initFilterListener() {
 
         // (真正的)筛选视图点击
@@ -301,7 +275,6 @@ public class HomeActivity extends XDtextbookGOActivity{
     }
 
     private void initBookInfo(){
-        swipeView.setRefreshing(true);
         infoList.clear();
         FindCallback findCallback = new FindCallback<AVObject>() {
             @Override
@@ -310,11 +283,10 @@ public class HomeActivity extends XDtextbookGOActivity{
                     for (AVObject av : list) {
                         getDownloadData(list, av);
                     }
-                    hao_recycleview.refreshComplete();
-                    swipeView.setRefreshing(false);
+                    mPullLoadMoreRecyclerView.setPullLoadMoreCompleted();
                     adapter.notifyDataSetChanged();
                 } else {
-                    swipeView.setRefreshing(false);
+                    mPullLoadMoreRecyclerView.setPullLoadMoreCompleted();
                     adapter.notifyDataSetChanged();
                     showError(activity.getString(R.string.network_error));
                     Log.e("tag114", e.getCode() + "");
@@ -326,15 +298,15 @@ public class HomeActivity extends XDtextbookGOActivity{
 
     private void getDownloadData(List<AVObject> list, AVObject av){
         BookInfo bookInfo = new BookInfo();
-        bookInfo.setOri_price(av.getString("oriPrice"));
-        bookInfo.setPrice_name(av.getString("price"));
+        bookInfo.setOri_price(av.getDouble("oriPrice"));
+        bookInfo.setPrice_name(av.getDouble("price"));
         bookInfo.setXinjiu_name(av.getString("xinjiu"));
         bookInfo.setPublisher_name(av.getString("publisher"));
         bookInfo.setGrade_name(av.getString("grade"));
         bookInfo.setAuthor_name(av.getString("author"));
         bookInfo.setBook_name(av.getString("bookName"));
         bookInfo.setDept_name(av.getString("dept"));
-        bookInfo.setCount(av.getString("count"));
+        bookInfo.setCount(av.getInt("count"));
         bookInfo.setPublish_user(av.getString("userName"));
         bookInfo.setImageId(av.getAVFile("picture").getUrl());
         infoList.add(bookInfo);

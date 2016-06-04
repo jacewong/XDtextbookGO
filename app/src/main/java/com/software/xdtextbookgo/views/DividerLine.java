@@ -1,4 +1,4 @@
-package com.software.xdtextbookgo.service;
+package com.software.xdtextbookgo.views;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;

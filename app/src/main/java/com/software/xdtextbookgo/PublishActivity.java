@@ -1,77 +1,79 @@
 package com.software.xdtextbookgo;
 
-import android.app.Activity;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.design.widget.TabLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TabHost;
 import android.widget.TextView;
-import android.app.TabActivity;
+import android.widget.Toast;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVFile;
-import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.SaveCallback;
-import com.software.xdtextbookgo.popupwindow.SelectPicPopupWindow;
-
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Objects;
 
+import com.bumptech.glide.Glide;
 import com.software.xdtextbookgo.filter_opensource.ImageManager;
+import com.software.xdtextbookgo.model.BookInfo;
 import com.software.xdtextbookgo.service.AVService;
+import com.software.xdtextbookgo.views.ActionSheetDialog;
+import com.software.xdtextbookgo.views.ProgressView;
 
 /**
  * Created by huang zhen xi on 2016/4/24.
  */
 public class PublishActivity extends XDtextbookGOActivity {
-    private TextView title_text, et_dept, et_xinjiu, et_grade;
+    private TextView et_dept, et_xinjiu, et_grade;
     private EditText et_bookname,et_author,et_publisher, et_preprice, et_price, et_count;
-    private Button btn_back,btn_publish;
+    private Button btn_publish;
     private ImageView img_btn;
-    private SelectPicPopupWindow menuWindow;
     private Context mContext;
     private ImageManager imageManager;
     private ProgressBar progressBar;
+    private ActionSheetDialog mActionSheet;
+    private BookInfo mbook;
+    private String bookName, author, publisher, dept, grade, xinjiu, objectId;
+    private int count;
+    private double oriPrice, price;
+    private AVUser user = AVUser.getCurrentUser();
     private static final int PHOTO_REQUEST_TAKEPHOTO = 1;// 拍照
     private static final int PHOTO_REQUEST_GALLERY = 2;// 从相册中选择
     private static final int PHOTO_REQUEST_CUT = 3;// 结果
+
+    private boolean flag = false;
     File outputImage = new File(Environment.getExternalStorageDirectory(),"output_image.jpg");
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = PublishActivity.this;
         setContentView(R.layout.publish_layout);
         img_btn = (ImageView) findViewById(R.id.addImageView);
-        progressBar = createProgressBar(this,null);
+
+        ProgressView progressView = new ProgressView(this);
+        progressBar = progressView.createProgressBar(this, null);
         progressBar.setVisibility(View.INVISIBLE);
+
         et_bookname = (EditText) findViewById(R.id.et_bookname);
         et_author = (EditText) findViewById(R.id.et_author);
         et_publisher = (EditText) findViewById(R.id.et_publisher);
@@ -161,68 +163,66 @@ public class PublishActivity extends XDtextbookGOActivity {
             }
         });
 
+        mbook = (BookInfo) getIntent().getSerializableExtra("book");
+        if (mbook != null){
+            initData();
+        }
+
         btn_publish = (Button) findViewById(R.id.bt_publish);
         btn_publish.setOnClickListener(publishListener);
-
-
 
     }
 
 
 
+
     View.OnClickListener publishListener = new View.OnClickListener(){
         public void onClick(View v){
-            String bookName = et_bookname.getText().toString();
-            String author = et_author.getText().toString();
-            String publisher = et_publisher.getText().toString();
-            String oriPrice = et_preprice.getText().toString();
-            String dept = et_dept.getText().toString();
-            String grade = et_grade.getText().toString();
-            String price = et_price.getText().toString();
-            String count = et_count.getText().toString();
-            String xinjiu = et_xinjiu.getText().toString();
+            bookName = et_bookname.getText().toString();
+            author = et_author.getText().toString();
+            publisher = et_publisher.getText().toString();
+            String oriPri = et_preprice.getText().toString();
+            dept = et_dept.getText().toString();
+            grade = et_grade.getText().toString();
+            String newPri = et_price.getText().toString();
+            String cnt = et_count.getText().toString();
+            xinjiu = et_xinjiu.getText().toString();
             if(bookName.isEmpty() || author.isEmpty() || publisher.isEmpty()||
-                    oriPrice.isEmpty()||dept.isEmpty()||grade.isEmpty()||price.isEmpty()||count.isEmpty()||xinjiu.isEmpty()){
+                    oriPri.isEmpty()||dept.isEmpty()||grade.isEmpty()||newPri.isEmpty()||cnt.isEmpty()||xinjiu.isEmpty()){
                 showError(activity.getString(R.string.publish_message));
                 return;
             }
-         progressBar.setVisibility(View.VISIBLE);
-            AVUser user = AVUser.getCurrentUser();
-            try{
-               final AVFile file = AVFile.withAbsoluteLocalPath("output_image.jpg", Environment.getExternalStorageDirectory() + "/output_image.jpg");
-                file.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(AVException e) {
-                        if (e != null) {
-                            progressBar.setVisibility(View.INVISIBLE);
-                            showError(activity.getString(R.string.network_error));
-                            // 存储成功
-                        }
-                        //      Log.d("tag", file.getUrl());//返回一个唯一的 Url 地址
-                    }
-                });
-                SaveCallback saveCallback = new SaveCallback() {
-                    @Override
-                    public void done(AVException e) {
-                        if (e == null) {
-                            progressBar.setVisibility(View.INVISIBLE);
-                            showPublishSuccess();
-                            // 存储成功
-                        } else {
-                            progressBar.setVisibility(View.INVISIBLE);
-                            showError(activity.getString(R.string.network_error));
-                        }
-                    }
-                };
-                AVService.upLoad(user, file, bookName, author, publisher, oriPrice, dept, grade, price, count, xinjiu, saveCallback);
+            oriPrice = Double.parseDouble(oriPri);
+            count = Integer.parseInt(cnt);
+            price = Double.parseDouble(newPri);
 
-            }catch (FileNotFoundException e){
-                Log.e("tag","找不到文件");
-            }
-
+            progressBar.setVisibility(View.VISIBLE);
+            if(mbook!=null)
+                uploadChange();
+            else uploadNew();
 
         }
     };
+
+    private void initData(){
+        objectId = mbook.getObjectId();
+        et_bookname.setText(mbook.getBook_name());
+        et_author.setText(mbook.getAuthor_name());
+        et_publisher.setText(mbook.getPublisher_name());
+        et_preprice.setText(mbook.getOri_price()+"");
+        et_dept.setText(mbook.getDept_name());
+        et_grade.setText(mbook.getGrade_name());
+        et_price.setText(mbook.getPrice_name() + "");
+        et_count.setText(mbook.getCount() + "");
+        et_xinjiu.setText(mbook.getXinjiu_name());
+        img_btn.setBackgroundDrawable(null);
+        Glide.with(img_btn.getContext())
+                .load(mbook.getImageId())
+                .into(img_btn);
+
+
+
+    }
 
     private void inittoolbar()
     {
@@ -236,17 +236,83 @@ public class PublishActivity extends XDtextbookGOActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+
+    private void uploadNew(){
+        try{
+            final AVFile file = AVFile.withAbsoluteLocalPath("output_image.jpg", Environment.getExternalStorageDirectory() + "/output_image.jpg");
+            file.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(AVException e) {
+                    if (e != null) {
+                        progressBar.setVisibility(View.INVISIBLE);
+                        showError(activity.getString(R.string.network_error));
+                        // 存储成功
+                    }
+                    //      Log.d("tag", file.getUrl());//返回一个唯一的 Url 地址
+                }
+            });
+            SaveCallback saveCallback = new SaveCallback() {
+                @Override
+                public void done(AVException e) {
+                    if (e == null) {
+                        progressBar.setVisibility(View.INVISIBLE);
+                        showPublishSuccess();
+                        // 存储成功
+                    } else {
+                        progressBar.setVisibility(View.INVISIBLE);
+                        showError(activity.getString(R.string.network_error));
+                    }
+                }
+            };
+            AVService.upLoadOrChange(objectId, user, file, bookName, author, publisher, oriPrice, dept, grade, price, count, xinjiu, saveCallback);
+
+        }catch (FileNotFoundException e){
+            Log.e("tag","找不到文件");
+        }
+    }
+
+
+    private void uploadChange(){
+        if (flag == true){
+            uploadNew();
+        }
+        else{
+            final AVFile file = new AVFile("output_image.jpg", mbook.getImageId(), new HashMap<String, Object>());
+            file.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(AVException e) {
+                    if (e != null) {
+                        progressBar.setVisibility(View.INVISIBLE);
+                        showError(activity.getString(R.string.network_error));
+                        Log.e("error", e.getCode()+"");
+                        // 存储成功
+                    }
+                    Log.e("success", file.getUrl());//返回一个唯一的 Url 地址
+                }
+            });
+            SaveCallback saveCallback = new SaveCallback() {
+                @Override
+                public void done(AVException e) {
+                    if (e == null) {
+                        progressBar.setVisibility(View.INVISIBLE);
+                        showPublishSuccess();
+                        // 存储成功
+                    } else {
+                        progressBar.setVisibility(View.INVISIBLE);
+                        showError(activity.getString(R.string.network_error));
+                    }
+                }
+            };
+            AVService.upLoadOrChange(objectId, user, file, bookName, author, publisher, oriPrice, dept, grade, price, count, xinjiu, saveCallback);
+        }
+    }
+
     public boolean onOptionsItemSelected(MenuItem item)
     {
         // TODO Auto-generated method stub
         if(item.getItemId() == android.R.id.home)
         {
-           // Intent intent = new Intent(PublishActivity.this,TabhostActivity.class);
-           /// PublishActivity.this.startActivity(intent);
-            //
-            //TabhostActivity.Instance.getTabHost().setCurrentTab(0);
-            //TabhostActivity.Instance.onTabChanged("Tab_Home");
-            finish();
+            showBackMsg();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -256,67 +322,51 @@ public class PublishActivity extends XDtextbookGOActivity {
     /**
      * 5.2 zhao peng 增加拍照\相册获取图片，剪辑图片功能
      *
-     * 5.7使用底部弹窗 zxhuang
+     * 6.2使用底部弹窗 actionsheet zxhuang
      */
-
-    public void backgroundAlpha(float bgAlpha)
-    {
-        WindowManager.LayoutParams lp = getWindow().getAttributes();
-        lp.alpha = bgAlpha; //0.0-1.0
-        getWindow().setAttributes(lp);
-    }
-
 
     private void init() {
         //为ImageButton和Button添加监听事件
         img_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-  /*              backgroundAlpha(0.7f);
-                menuWindow = new SelectPicPopupWindow(mContext, itemsOnClick);
-                menuWindow.showAtLocation(findViewById(R.id.publishLayout),
-                        Gravity.BOTTOM| Gravity.CENTER_HORIZONTAL, 0, 0);  */
+                if ( mActionSheet == null) {
+                    mActionSheet = new ActionSheetDialog(PublishActivity.this);
+                    mActionSheet.addMenuItem("拍照").addMenuItem("相册");
+                    mActionSheet.setMenuListener(new ActionSheetDialog.MenuListener() {
+                        @Override
+                        public void onItemSelected(int position, String item) {
+                            switch (position){
+                                case 0:
+                                    // 调用系统的拍照功能
+                                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                    // 指定调用相机拍照后照片的储存路径
+                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(outputImage));
+                                    startActivityForResult(intent, PHOTO_REQUEST_TAKEPHOTO);
+                                    break;
+                                case 1:
+                                    Intent picintent = new Intent(Intent.ACTION_PICK, null);
+                                    picintent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                                    startActivityForResult(picintent, PHOTO_REQUEST_GALLERY);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        @Override
+                        public void onCancel() {
+                        }
+                    });
+                }
+                mActionSheet.show();
 
-                     showDialog();
-
+                    // showDialog();
             }
         });
     }
-    //btn.setOnClickListener(this);
-
-    //为弹出窗口实现监听类
-  /*  private View.OnClickListener itemsOnClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            backgroundAlpha(1f);
-            menuWindow.dismiss();
-            switch (v.getId()) {
-                // 拍照
-                case R.id.takePhotoBtn:
-                    // 调用系统的拍照功能
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    // 指定调用相机拍照后照片的储存路径
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(outputImage));
-                    startActivityForResult(intent, PHOTO_REQUEST_TAKEPHOTO);
-
-                // 相册选择图片
-                case R.id.pickPhotoBtn:
-                    Intent pickintent = new Intent(Intent.ACTION_PICK, null);
-                    pickintent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,"image/*");
-                    startActivityForResult(pickintent, PHOTO_REQUEST_GALLERY);
-                    break;
-                default:
-                    break;
-            }
-        }
-    };  */
-
-
-
-
 
     //提示对话框方法
-    private void showDialog() {
+  /*  private void showDialog() {
         new AlertDialog.Builder(this)
                 .setTitle("图像设置")
                 .setPositiveButton("拍照", new DialogInterface.OnClickListener() {
@@ -343,7 +393,8 @@ public class PublishActivity extends XDtextbookGOActivity {
                         startActivityForResult(intent, PHOTO_REQUEST_GALLERY);
                     }
                 }).show();
-    }
+    }  */
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO Auto-generated method stub
@@ -395,6 +446,7 @@ public class PublishActivity extends XDtextbookGOActivity {
             Drawable drawable = new BitmapDrawable(photo);
             img_btn.setBackgroundDrawable(drawable);
         }
+        flag = true;
     }
 
 
@@ -414,35 +466,28 @@ public class PublishActivity extends XDtextbookGOActivity {
                         }).show();
     }
 
-
-    /**
-     * 在屏幕上添加一个转动条，默认为隐藏状态
-     * 注意：务必保证此方法在setContentView()方法后调用，否则小菊花将会处于最底层，被屏幕其他View给覆盖
-     *
-     * @param activity                    需要添加菊花的Activity
-     * @param customIndeterminateDrawable 自定义的菊花图片，可以为null，此时为系统默认菊花
-     * @return {ProgressBar}    菊花对象
-     */
-    private ProgressBar createProgressBar(Activity activity, Drawable customIndeterminateDrawable) {
-        // activity根部的ViewGroup，其实是一个FrameLayout
-        FrameLayout rootContainer = (FrameLayout) activity.findViewById(android.R.id.content);
-        // 给progressbar准备一个FrameLayout的LayoutParams
-        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        // 设置对其方式为：屏幕居中对其
-        lp.gravity = Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL;
-
-        ProgressBar progressBar = new ProgressBar(activity);
-        progressBar.setVisibility(View.GONE);
-        progressBar.setLayoutParams(lp);
-        // 自定义小菊花
-        if (customIndeterminateDrawable != null) {
-            progressBar.setIndeterminateDrawable(customIndeterminateDrawable);
-        }
-        // 将菊花添加到FrameLayout中
-        rootContainer.addView(progressBar);
-        return progressBar;
+    private  void showBackMsg(){
+        new AlertDialog.Builder(activity)
+                .setTitle(
+                        activity.getResources().getString(
+                                R.string.dialog_message_title))
+                .setMessage("确定返回?")
+                .setNegativeButton(android.R.string.cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                .setPositiveButton(android.R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                                finish();
+                                dialog.dismiss();
+                            }
+                        })
+                .show();
     }
 }
 

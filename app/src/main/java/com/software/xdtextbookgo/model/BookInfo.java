@@ -1,4 +1,4 @@
-package com.software.xdtextbookgo.structure;
+package com.software.xdtextbookgo.model;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -14,20 +14,22 @@ public class BookInfo implements Serializable {
     private String publisher_name;
     private String dept_name;
     private String grade_name;
-    private String ori_price;
-    private String price_name;
+    private double ori_price;
+    private double price_name;
     private String xinjiu_name;
-    private String count;
+    private int count;
     private String publish_user;
+    private String objectId;
 
+    public String getObjectId(){return objectId;}
     public String getUser(){return publish_user;}
-    public String getCount(){return count;}
+    public int getCount(){return count;}
 
     public String getImageId(){
         return imageId;
     }
 
-    public String getOri_price(){return ori_price;}
+    public double getOri_price(){return ori_price;}
 
     public String getAuthor_name() {
         return author_name;
@@ -45,7 +47,7 @@ public class BookInfo implements Serializable {
         return grade_name;
     }
 
-    public String getPrice_name() {
+    public double getPrice_name() {
         return price_name;
     }
 
@@ -57,13 +59,13 @@ public class BookInfo implements Serializable {
         return xinjiu_name;
     }
 
-    public void setCount(String count){this.count = count;}
+    public void setCount(int count){this.count = count;}
 
     public void setImageId(String imageId){
         this.imageId = imageId;
     }
 
-    public void setOri_price(String ori_price){this.ori_price = ori_price;}
+    public void setOri_price(double ori_price){this.ori_price = ori_price;}
 
     public void setAuthor_name(String author_name) {
         this.author_name=author_name;
@@ -81,7 +83,7 @@ public class BookInfo implements Serializable {
         this.grade_name = grade_name;
     }
 
-    public void setPrice_name(String price_name) {
+    public void setPrice_name(double price_name) {
         this.price_name = price_name;
     }
 
@@ -92,4 +94,5 @@ public class BookInfo implements Serializable {
     public void setXinjiu_name(String xinjiu_name) {
         this.xinjiu_name = xinjiu_name;
     }
+    public void setObjectId(String objectId){this.objectId = objectId;}
 }

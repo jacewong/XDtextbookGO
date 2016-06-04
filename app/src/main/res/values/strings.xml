@@ -13,4 +13,6 @@
     <string name="error_login_more">登录失败次数超过限制，请稍候再试</string>
     <string name="logout_message">您确定要退出登录吗？</string>
     <string name="publish_message">请完善书籍信息..</string>
+
+    <string name="load_more_text">正在加载...</string>
 </resources>

@@ -1,11 +1,8 @@
 package com.software.xdtextbookgo;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,7 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.software.xdtextbookgo.structure.BookInfo;
+import com.software.xdtextbookgo.model.BookInfo;
+import com.software.xdtextbookgo.service.DoubleFormat;
 
 /**
  * Created by huang zhen xi on 2016/4/28.
@@ -24,6 +22,7 @@ public class SaleDetailActivity extends XDtextbookGOActivity {
     private Button btn_back, btn_sendmsg;
     private ImageView bookpic;
     private BookInfo mbook;
+    DoubleFormat df = new DoubleFormat();
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -39,6 +38,11 @@ public class SaleDetailActivity extends XDtextbookGOActivity {
                 startActivity(intent);
             }
         });
+        initview();
+
+    }
+
+    private void initview(){
 
         user_text = (TextView) findViewById(R.id.user_text);
         user_text.setText(mbook.getUser());
@@ -59,27 +63,23 @@ public class SaleDetailActivity extends XDtextbookGOActivity {
         show_grade.setText(mbook.getGrade_name());
 
         new_price = (TextView) findViewById(R.id.new_price);
-        new_price.setText(mbook.getPrice_name());
+        new_price.setText("￥"+ df.changeFormat(mbook.getPrice_name()));
 
         show_xinjiu = (TextView) findViewById(R.id.show_xinjiu);
         show_xinjiu.setText(mbook.getXinjiu_name());
 
         show_count = (TextView) findViewById(R.id.show_count);
-        show_count.setText(mbook.getCount());
+        show_count.setText(mbook.getCount() + "本");
 
         bookpic = (ImageView) findViewById(R.id.bookpicture);
         Glide.with(bookpic.getContext())
                 .load(mbook.getImageId())
                 .fitCenter()
                 .into(bookpic);
-     //   bookpic.setImageResource(mbook.getImageId());
 
         old_price = (TextView) this.findViewById(R.id.old_price);
         old_price.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG);//文字中间加删除线
-        old_price.setText(mbook.getOri_price());
-
-
-
+        old_price.setText(df.changeFormat(mbook.getOri_price()));
     }
 
     private void inittoolbar()
@@ -93,6 +93,7 @@ public class SaleDetailActivity extends XDtextbookGOActivity {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
+
     public boolean onOptionsItemSelected(MenuItem item)
     {
         // TODO Auto-generated method stub

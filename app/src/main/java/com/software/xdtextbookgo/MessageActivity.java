@@ -1,12 +1,9 @@
 package com.software.xdtextbookgo;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -14,7 +11,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.software.xdtextbookgo.adapter.MsgAdapter;
-import com.software.xdtextbookgo.structure.Msg;
+import com.software.xdtextbookgo.model.Msg;
 
 import java.util.ArrayList;
 import java.util.List;

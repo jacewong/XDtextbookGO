@@ -39,6 +39,14 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!--类似ios底部弹出菜单 -->
+    <style name="ActionSheetDialog" parent="android:Theme.Dialog">
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
     <!-- 选择照片底部弹出层 -->
     <style name="PopupAnimation" parent="android:Animation">
         <item name="android:windowEnterAnimation">@anim/push_bottom_in</item>

@@ -1,4 +1,4 @@
-package com.software.xdtextbookgo.structure;
+package com.software.xdtextbookgo.model;
 
 /**
  * Created by huang zhen xion 2016/4/29.
