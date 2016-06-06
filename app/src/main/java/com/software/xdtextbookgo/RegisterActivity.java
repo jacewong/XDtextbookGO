@@ -1,35 +1,26 @@
 package com.software.xdtextbookgo;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.SignUpCallback;
 import com.software.xdtextbookgo.service.AVService;
-import com.software.xdtextbookgo.service.XDtextbookGOApplication;
+import com.software.xdtextbookgo.views.ProgressView;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -52,8 +43,11 @@ public class RegisterActivity extends XDtextbookGOActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.register_layout);
         bt_register = (Button) findViewById(R.id.bt_register);
-        progressBar = createProgressBar(this,null);
+
+        ProgressView progressView = new ProgressView(this);
+        progressBar = progressView.createProgressBar(this, null);
         progressBar.setVisibility(View.INVISIBLE);
+
         inittoolbar();
 
         et_name = (EditText) findViewById(R.id.et_name);
@@ -257,35 +251,5 @@ public class RegisterActivity extends XDtextbookGOActivity implements View.OnCli
                                 dialog.dismiss();
                             }
                         }).show();
-    }
-
-    /**
-     * 在屏幕上添加一个转动条，默认为隐藏状态
-     * 注意：务必保证此方法在setContentView()方法后调用，否则小菊花将会处于最底层，被屏幕其他View给覆盖
-     *
-     * @param activity                    需要添加菊花的Activity
-     * @param customIndeterminateDrawable 自定义的菊花图片，可以为null，此时为系统默认菊花
-     * @return {ProgressBar}    菊花对象
-     */
-    private ProgressBar createProgressBar(Activity activity, Drawable customIndeterminateDrawable) {
-        // activity根部的ViewGroup，其实是一个FrameLayout
-        FrameLayout rootContainer = (FrameLayout) activity.findViewById(android.R.id.content);
-        // 给progressbar准备一个FrameLayout的LayoutParams
-        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        // 设置对其方式为：屏幕居中对其
-        lp.gravity = Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL;
-
-        ProgressBar progressBar = new ProgressBar(activity);
-        progressBar.setVisibility(View.GONE);
-        progressBar.setLayoutParams(lp);
-        // 自定义小菊花
-        if (customIndeterminateDrawable != null) {
-            progressBar.setIndeterminateDrawable(customIndeterminateDrawable);
-        }
-        // 将菊花添加到FrameLayout中
-        rootContainer.addView(progressBar);
-        return progressBar;
     }
 }

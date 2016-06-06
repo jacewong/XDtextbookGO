@@ -12,7 +12,7 @@ import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
 
-import com.software.xdtextbookgo.structure.EnumTabInfo;
+import com.software.xdtextbookgo.model.EnumTabInfo;
 
 /**
  * Created by huang zhen xi on 2016/4/25.

@@ -14,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId "com.software.xdtextbookgo"
-        minSdkVersion 22
+        minSdkVersion 14
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -49,7 +49,14 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.7.0'
 
     //涵上拉加载layout
-    compile 'com.github.fangx:haorefresh:1.0'
     compile 'com.wang.avi:library:1.0.1'
+
+    //通信所需替代Intent,Handler,BroadCast在Fragment，Activity，Service，线程之间传递消息
+    compile 'de.greenrobot:eventbus:2.4.0'
+
+    //lib
+    compile files('libs/prettytime-3.2.5.Final.jar')
+
+
 
 }

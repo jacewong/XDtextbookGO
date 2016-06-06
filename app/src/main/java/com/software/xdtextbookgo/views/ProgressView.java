@@ -1,15 +1,21 @@
-package com.software.xdtextbookgo.service;
+package com.software.xdtextbookgo.views;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.IntDef;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 
 import com.software.xdtextbookgo.R;
 import com.wang.avi.indicator.BallBeatIndicator;
@@ -43,6 +49,7 @@ import com.wang.avi.indicator.SquareSpinIndicator;
 import com.wang.avi.indicator.TriangleSkewSpinIndicator;
 
 /**
+ * 使用开源库 compile 'com.wang.avi:library:1.0.1'  作为进度条
  * Created by fangxiao on 15/12/2.
  */
 public class ProgressView extends View {
@@ -330,5 +337,37 @@ public class ProgressView extends View {
 
     private int dp2px(int dpValue) {
         return (int) getContext().getResources().getDisplayMetrics().density * dpValue;
+    }
+
+
+    //集成进度圈代码到该项目中
+    /**
+     * 在屏幕上添加一个转动条，默认为隐藏状态
+     * 注意：务必保证此方法在setContentView()方法后调用，否则小菊花将会处于最底层，被屏幕其他View给覆盖
+     *
+     * @param activity                    需要添加菊花的Activity
+     * @param customIndeterminateDrawable 自定义的菊花图片，可以为null，此时为系统默认菊花
+     * @return {ProgressBar}    菊花对象
+     */
+    public ProgressBar createProgressBar(Activity activity, Drawable customIndeterminateDrawable) {
+        // activity根部的ViewGroup，其实是一个FrameLayout
+        FrameLayout rootContainer = (FrameLayout) activity.findViewById(android.R.id.content);
+        // 给progressbar准备一个FrameLayout的LayoutParams
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        // 设置对其方式为：屏幕居中对其
+        lp.gravity = Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL;
+
+        ProgressBar progressBar = new ProgressBar(activity);
+        progressBar.setVisibility(View.GONE);
+        progressBar.setLayoutParams(lp);
+        // 自定义小菊花
+        if (customIndeterminateDrawable != null) {
+            progressBar.setIndeterminateDrawable(customIndeterminateDrawable);
+        }
+        // 将菊花添加到FrameLayout中
+        rootContainer.addView(progressBar);
+        return progressBar;
     }
 }

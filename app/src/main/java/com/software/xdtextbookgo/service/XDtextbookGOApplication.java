@@ -9,11 +9,18 @@ import com.avos.avoscloud.AVOSCloud;
  * 初始化接入账户的pid和key
  */
 public class XDtextbookGOApplication extends Application {
+
+    public static XDtextbookGOApplication ctx;
     @Override
     public void onCreate() {
         super.onCreate();
 
         // 初始化参数依次为 this, AppId, AppKey
         AVOSCloud.initialize(this, "OgPNedh1WSsDsQrDRs7cJhez-gzGzoHsz", "AOSIx7gHLoAhN3UyC6N20O4p");
+
+        // 节省流量
+        AVOSCloud.setLastModifyEnabled(true);
+
+        AVImClientManager.getInstance().init(this);
     }
 }

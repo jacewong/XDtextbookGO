@@ -8,7 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.software.xdtextbookgo.structure.Msg;
+import com.software.xdtextbookgo.model.Msg;
 import com.software.xdtextbookgo.R;
 
 import java.util.List;

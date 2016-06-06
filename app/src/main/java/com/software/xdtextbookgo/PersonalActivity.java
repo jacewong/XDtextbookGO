@@ -14,7 +14,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.im.v2.AVIMClient;
+import com.avos.avoscloud.im.v2.AVIMException;
+import com.avos.avoscloud.im.v2.callback.AVIMClientCallback;
+import com.software.xdtextbookgo.service.AVImClientManager;
 import com.software.xdtextbookgo.service.AVService;
+import com.software.xdtextbookgo.utils.Constants;
 
 /**
  * Created by huang zhen xi on 2016/4/24.
@@ -22,7 +27,8 @@ import com.software.xdtextbookgo.service.AVService;
 public class PersonalActivity extends XDtextbookGOActivity {
     private TextView title_text, sale_text, message_text,user_text;
     private Button btn_back, btn_logout;
-    private ImageView back;
+    private AVUser avUser;
+    private String myUser;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.personal_layout);
@@ -41,12 +47,33 @@ public class PersonalActivity extends XDtextbookGOActivity {
             }
         });
 
+        myUser = avUser.getCurrentUser().getUsername();
         message_text = (TextView) this.findViewById(R.id.message_text);
         message_text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(PersonalActivity.this, MyMsgActivity.class);
-                startActivity(intent);
+                final AVIMClient client = AVImClientManager.getInstance().getClient();
+                try{
+                    client.getQuery();
+                    Intent intent = new Intent(PersonalActivity.this, MyMsgActivity.class);
+                    startActivity(intent);
+                }catch (NullPointerException e){
+                    AVImClientManager.getInstance().open(PersonalActivity.this, myUser, new AVIMClientCallback() {
+                        @Override
+                        public void done(AVIMClient avimClient, AVIMException e) {
+                            if (filterException(e)) {
+                                Log.e("susmsg", "success");
+                                Intent intent = new Intent(PersonalActivity.this, MyMsgActivity.class);
+                                startActivity(intent);
+                            }
+                            else {
+                                showError("失败");
+                                showToast(e.toString());
+                            }
+                        }
+                    });
+                }
+
             }
         });
 
@@ -72,10 +99,24 @@ public class PersonalActivity extends XDtextbookGOActivity {
                                 new DialogInterface.OnClickListener() {
 
                                     @Override
-                                    public void onClick(DialogInterface dialog,
+                                    public void onClick(final DialogInterface dialog,
                                                         int which) {
-                                        dialog.dismiss();
-                                        Logout();
+                                        try {
+                                            String clientId = AVImClientManager.getInstance().getClientId();
+                                            Log.e("client", clientId);
+                                            AVImClientManager.getInstance().closeWithCallback(new AVIMClientCallback() {
+                                                @Override
+                                                public void done(AVIMClient avimClient, AVIMException e) {
+                                                    Log.e("excep", e.getCode() + "");
+                                                    dialog.dismiss();
+                                                    Logout();
+                                                }
+                                            });
+                                        } catch (IllegalStateException e) {
+                                            Log.e("logout_error", "状态错误");
+                                            dialog.dismiss();
+                                            Logout();
+                                        }
                                     }
                                 }).show();
             }

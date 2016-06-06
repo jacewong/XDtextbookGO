@@ -12,6 +12,13 @@
     <color name="blueAccent">#2196F3</color>
     <color name="anotherblue">#3498db</color>
 
+    <color name="common_blue">#2c97e8</color>
+    <color name="common_gray">#898989</color>
+
+
+    <color name="menu_item_normal">#c9ffffff</color>
+    <color name="menu_item_pressed">#d5dadada</color>
+
 
     <!--filter-->
     <!-- common -->
