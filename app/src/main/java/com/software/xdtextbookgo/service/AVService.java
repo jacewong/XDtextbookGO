@@ -10,6 +10,9 @@ import com.avos.avoscloud.GetCallback;
 import com.avos.avoscloud.SaveCallback;
 import com.avos.avoscloud.SignUpCallback;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * Created by huang zhen xi on 2016/5/23.
  * leancloud云服务的服务接口
@@ -52,7 +55,7 @@ public class AVService {
     public static void refreshQuery(int count_query,FindCallback findCallback){
         AVQuery<AVObject> query = new AVQuery<AVObject>("SaleInfo");
         query.orderByDescending("updatedAt");//按照时间降序
-        query.setLimit(count_query);//最大6个
+        query.setLimit(count_query);//最大10个
         query.findInBackground(findCallback);
     }
 
@@ -67,10 +70,65 @@ public class AVService {
     public static void userSaleQuery(String user, FindCallback findCallback){
         AVQuery<AVObject> query = new AVQuery<AVObject>("SaleInfo");
         query.whereEqualTo("userName", user);
-        query.orderByDescending("updateAt");
+        query.orderByDescending("updatedAt");
         query.findInBackground(findCallback);
     }
 
+    //书籍包含查询，select * from BookInfo where title LIKE '%XX%'
+    public static void bookNameQuery(String bookname, FindCallback findCallback){
+        AVQuery<AVObject> query = new AVQuery<AVObject>("SaleInfo");
+        query.whereContains("bookName", bookname);
+        query.orderByAscending("price");
+        query.findInBackground(findCallback);
+    }
 
+    public static void gradeQuery(int count_query, String grade, FindCallback findCallback){
+        AVQuery<AVObject> query = new AVQuery<>("SaleInfo");
+        if (grade.equals("全部")){
+            query.orderByDescending("updatedAt");
+        }
+        else{
+            query.whereEqualTo("grade", grade);
+            query.orderByDescending("updatedAt");
+        }
+        query.setLimit(count_query);//最大10个
+        query.findInBackground(findCallback);
+    }
 
+    public static void deptQuery(int count_query, String dept, FindCallback findCallback){
+        AVQuery<AVObject> query = new AVQuery<>("SaleInfo");
+        if (dept.equals("全部")){
+            query.orderByDescending("updatedAt");
+        }
+        else{
+            query.whereEqualTo("dept", dept);
+            query.orderByDescending("updatedAt");
+        }
+        query.setLimit(count_query);//最大10个
+        query.findInBackground(findCallback);
+    }
+
+    //And查询
+    public static void deptGradeQuery(int count_query, String dept, String grade, FindCallback findCallback){
+        final AVQuery<AVObject> deptQuery = new AVQuery<>("SaleInfo");
+        deptQuery.whereEqualTo("dept", dept);
+        final AVQuery<AVObject> gradeQuery = new AVQuery<>("SaleInfo");
+        gradeQuery.whereEqualTo("grade", grade);
+        if (grade.equals("全部")){
+            deptQuery.orderByDescending("updatedAt");
+            deptQuery.setLimit(count_query);//最大10个
+            deptQuery.findInBackground(findCallback);
+        }
+        else if(dept.equals("全部")){
+            gradeQuery.orderByDescending("updateAt");
+            gradeQuery.setLimit(count_query);
+            gradeQuery.findInBackground(findCallback);
+        }
+        else{
+            AVQuery<AVObject> query = AVQuery.and(Arrays.asList(deptQuery, gradeQuery));
+            query.orderByDescending("updatedAt");
+            query.setLimit(count_query);//最大10个
+            query.findInBackground(findCallback);
+        }
+    }
 }

@@ -29,6 +29,16 @@ public class PersonalActivity extends XDtextbookGOActivity {
     private Button btn_back, btn_logout;
     private AVUser avUser;
     private String myUser;
+    /**
+     * 上一次点击 back 键的时间
+     * 用于双击退出的判断
+     */
+    private static long lastBackTime = 0;
+
+    /**
+     * 当双击 back 键在此间隔内是直接触发 onBackPressed
+     */
+    private final int BACK_INTERVAL = 1000;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.personal_layout);
@@ -136,6 +146,17 @@ public class PersonalActivity extends XDtextbookGOActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
+    }
+
+    @Override
+    public void onBackPressed() {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastBackTime < BACK_INTERVAL) {
+            super.onBackPressed();
+        } else {
+            showToast("双击 back 退出");
+        }
+        lastBackTime = currentTime;
     }
 
 }

@@ -6,7 +6,8 @@
         <item>计算机学院</item>
         <item>机电工程学院</item>
         <item>物理与光电工程学院</item>
-        <item>更多</item>
+        <item>经济与管理学院</item>
+        <item>软件学院</item>
     </string-array>
     <string-array name="grade_items">
     <item>大一</item>

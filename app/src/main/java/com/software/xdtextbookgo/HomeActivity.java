@@ -25,6 +25,7 @@ import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.FindCallback;
 import com.software.xdtextbookgo.adapter.BookInfoAdapter;
 import com.software.xdtextbookgo.filter_opensource.FilterData;
+import com.software.xdtextbookgo.filter_opensource.FilterEntity;
 import com.software.xdtextbookgo.filter_opensource.FilterView;
 import com.software.xdtextbookgo.filter_opensource.ModelUtil;
 import com.software.xdtextbookgo.service.AVService;
@@ -41,6 +42,18 @@ import java.util.List;
 public class HomeActivity extends XDtextbookGOActivity{
     private ArrayList<BookInfo> infoList = new ArrayList<BookInfo>();
 
+
+    /**
+     * 上一次点击 back 键的时间
+     * 用于双击退出的判断
+     */
+    private static long lastBackTime = 0;
+
+    /**
+     * 当双击 back 键在此间隔内是直接触发 onBackPressed
+     */
+
+    private final int BACK_INTERVAL = 1000;
 //filter属性初始化
   //  @Bind(R.id.fv_top_filter)
   //  FilterView fvTopFilter;
@@ -52,10 +65,12 @@ public class HomeActivity extends XDtextbookGOActivity{
     private FilterData filterData;
     private Toolbar toolbar;
     private boolean isStickyTop = true; // 是否吸附在顶部
+    private String dept , grade ; //过滤器
 
 
     private PullLoadMoreRecyclerView mPullLoadMoreRecyclerView;
     private BookInfoAdapter adapter;
+    final private int countQuery = 10;
 
 
     protected void onCreate(Bundle savedInstanceState){
@@ -64,7 +79,6 @@ public class HomeActivity extends XDtextbookGOActivity{
         inittoolbar();
         initRecyclerView();
 
-        //@Bind(R.id.fv_top_filter)
         fvTopFilter = (FilterView) findViewById(R.id.fv_top_filter);
         initFilterData();
         initFilterView();
@@ -99,7 +113,11 @@ public class HomeActivity extends XDtextbookGOActivity{
                 Button ok = (Button) windowChange.findViewById(R.id.bt_ok);
                 ok.setOnClickListener(new View.OnClickListener(){
                     public void onClick(View v){
-                        String a = search.getText().toString().trim();
+                        String findBook = search.getText().toString().trim();
+                        if(findBook != null){
+                            FindCallback findCallback = getFindCallbackWithQuery();
+                            AVService.bookNameQuery(findBook, findCallback);
+                        }
                         alertDialog.dismiss();
                     }
                 });
@@ -162,19 +180,19 @@ public class HomeActivity extends XDtextbookGOActivity{
                     @Override
                     public void run() {
                         final int count = adapter.getItemCount();
-                        Log.e("pos", count + "");
+                       // Log.e("pos", count + "");
 
                         FindCallback findCallback = new FindCallback<AVObject>() {
                             @Override
                             public void done(List<AVObject> list, AVException e) {
                                 if (list != null) {
-                                    Log.e("size", list.size() + "");
+                                   // Log.e("size", list.size() + "");
                                     if (count == list.size()) {
                                         mPullLoadMoreRecyclerView.setPullLoadMoreCompleted();
                                         return;
                                     }
                                     for (int i = count; i < list.size(); i++) {
-                                        if (i == count + 6) {
+                                        if (i == count + countQuery) {
                                             break;
                                         }
                                         AVObject av = list.get(i);
@@ -235,7 +253,7 @@ public class HomeActivity extends XDtextbookGOActivity{
 
     private void initFilterListener() {
 
-        // (真正的)筛选视图点击
+        //筛选视图点击
         fvTopFilter.setOnFilterClickListener(new FilterView.OnFilterClickListener() {
             @Override
             public void onFilterClick(int position) {
@@ -246,29 +264,47 @@ public class HomeActivity extends XDtextbookGOActivity{
             }
         });
 
-  /*
-        // 排序Item点击
+
+
+        // 筛选dept点击
         fvTopFilter.setOnItemSortClickListener(new FilterView.OnItemSortClickListener() {
             @Override
             public void onItemSortClick(FilterEntity entity) {
-              //  fillAdapter(ModelUtil.getSortTravelingData(entity));
+                //  fillAdapter(ModelUtil.getSortTravelingData(entity));
+                dept = entity.getKey();
+                if (grade.equals(getString(R.string.filter_all))){
+                    FindCallback findCallback = getFindCallbackWithQuery();
+                    AVService.deptQuery(countQuery, dept, findCallback);
+                }
+                else{
+                    FindCallback findCallback = getFindCallbackWithQuery();
+                    AVService.deptGradeQuery(countQuery, dept, grade,findCallback);
+                }
             }
         });
 
-        // 筛选Item点击
+        // 筛选grade点击
         fvTopFilter.setOnItemFilterClickListener(new FilterView.OnItemFilterClickListener() {
             @Override
             public void onItemFilterClick(FilterEntity entity) {
-              //  fillAdapter(ModelUtil.getFilterTravelingData(entity));
+                grade = entity.getKey();
+                if (dept.equals(getString(R.string.filter_all))){
+                    FindCallback findCallback = getFindCallbackWithQuery();
+                    AVService.gradeQuery(countQuery, grade, findCallback);
+                }
+                else{
+                    FindCallback findCallback = getFindCallbackWithQuery();
+                    AVService.deptGradeQuery(countQuery, dept, grade,findCallback);
+                }
+
             }
         });
-*/
-
-
     }
 
     private void initBookInfo(){
         infoList.clear();
+        dept = getString(R.string.filter_all);
+        grade = getString(R.string.filter_all);
         FindCallback findCallback = new FindCallback<AVObject>() {
             @Override
             public void done(List<AVObject> list, AVException e) {
@@ -286,7 +322,7 @@ public class HomeActivity extends XDtextbookGOActivity{
                 }
             }
         };
-        AVService.refreshQuery(6, findCallback);
+        AVService.refreshQuery(countQuery, findCallback);
     }
 
     private void getDownloadData(List<AVObject> list, AVObject av){
@@ -303,5 +339,35 @@ public class HomeActivity extends XDtextbookGOActivity{
         bookInfo.setPublish_user(av.getString("userName"));
         bookInfo.setImageId(av.getAVFile("picture").getUrl());
         infoList.add(bookInfo);
+    }
+
+    private FindCallback getFindCallbackWithQuery(){
+        infoList.clear();
+        FindCallback findCallback = new FindCallback<AVObject>(){
+            @Override
+            public void done(List<AVObject> list, AVException e) {
+                if (list != null) {
+                    for (AVObject av : list) {
+                        getDownloadData(list, av);
+                    }
+                    adapter.notifyDataSetChanged();
+                } else {
+                    adapter.notifyDataSetChanged();
+                    showError(activity.getString(R.string.network_error));
+                }
+            }
+        };
+        return findCallback;
+    }
+
+    @Override
+    public void onBackPressed() {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastBackTime < BACK_INTERVAL) {
+            super.onBackPressed();
+        } else {
+            showToast("双击 back 退出");
+        }
+        lastBackTime = currentTime;
     }
 }

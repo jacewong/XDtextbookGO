@@ -4,6 +4,17 @@
     android:layout_height="match_parent">
     <include layout="@layout/title_layout" />
 
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:text="暂无数据"
+        style="@style/TextAppearance.Normal.Gray"/>
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/fragment_conversation_srl_pullrefresh"
         android:layout_width="match_parent"
@@ -14,5 +25,5 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </android.support.v4.widget.SwipeRefreshLayout>
-
+    </FrameLayout>
 </LinearLayout>
