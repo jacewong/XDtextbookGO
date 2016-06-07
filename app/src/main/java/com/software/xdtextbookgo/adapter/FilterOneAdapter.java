@@ -1,4 +1,4 @@
-package com.software.xdtextbookgo.filter_opensource;
+package com.software.xdtextbookgo.adapter;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.software.xdtextbookgo.R;
-import com.software.xdtextbookgo.filter_opensource.FilterEntity;
+import com.software.xdtextbookgo.model.FilterEntity;
 
 import java.util.List;
 

@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -14,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -24,12 +21,11 @@ import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.FindCallback;
 import com.software.xdtextbookgo.adapter.BookInfoAdapter;
-import com.software.xdtextbookgo.filter_opensource.FilterData;
-import com.software.xdtextbookgo.filter_opensource.FilterEntity;
-import com.software.xdtextbookgo.filter_opensource.FilterView;
-import com.software.xdtextbookgo.filter_opensource.ModelUtil;
+import com.software.xdtextbookgo.model.FilterData;
+import com.software.xdtextbookgo.model.FilterEntity;
+import com.software.xdtextbookgo.service.FilterView;
+import com.software.xdtextbookgo.model.ModelUtil;
 import com.software.xdtextbookgo.service.AVService;
-import com.software.xdtextbookgo.views.ProgressView;
 import com.software.xdtextbookgo.model.BookInfo;
 import com.software.xdtextbookgo.views.PullLoadMoreRecyclerView;
 
@@ -41,27 +37,21 @@ import java.util.List;
  */
 public class HomeActivity extends XDtextbookGOActivity{
     private ArrayList<BookInfo> infoList = new ArrayList<BookInfo>();
-
-
     /**
      * 上一次点击 back 键的时间
      * 用于双击退出的判断
      */
     private static long lastBackTime = 0;
-
     /**
      * 当双击 back 键在此间隔内是直接触发 onBackPressed
      */
-
     private final int BACK_INTERVAL = 1000;
-//filter属性初始化
-  //  @Bind(R.id.fv_top_filter)
-  //  FilterView fvTopFilter;
-    private int filterPosition = -1; // 点击FilterView的位置：排序(0)、筛选(1)
+
+    //filter属性初始化
     private Context mContext;
     private Activity mActivity;
 
-    FilterView fvTopFilter;
+    private FilterView fvTopFilter;
     private FilterData filterData;
     private Toolbar toolbar;
     private boolean isStickyTop = true; // 是否吸附在顶部
@@ -239,8 +229,8 @@ public class HomeActivity extends XDtextbookGOActivity{
 
         // 筛选数据
         filterData = new FilterData();
-        filterData.setSorts(ModelUtil.getSortData());
-        filterData.setFilters(ModelUtil.getFilterData());
+        filterData.setDept(ModelUtil.getDeptData());
+        filterData.setGrade(ModelUtil.getGradeData());
 
     }
 
@@ -257,44 +247,40 @@ public class HomeActivity extends XDtextbookGOActivity{
         fvTopFilter.setOnFilterClickListener(new FilterView.OnFilterClickListener() {
             @Override
             public void onFilterClick(int position) {
-                if (isStickyTop) {
-                    filterPosition = position;
-                    fvTopFilter.showFilterLayout(position);
-                }
+
+                fvTopFilter.showFilterLayout(position);
             }
         });
 
 
 
         // 筛选dept点击
-        fvTopFilter.setOnItemSortClickListener(new FilterView.OnItemSortClickListener() {
+        fvTopFilter.setOnItemDeptClickListener(new FilterView.OnItemDeptClickListener() {
             @Override
-            public void onItemSortClick(FilterEntity entity) {
+            public void onItemDeptClick(FilterEntity entity) {
                 //  fillAdapter(ModelUtil.getSortTravelingData(entity));
                 dept = entity.getKey();
-                if (grade.equals(getString(R.string.filter_all))){
+                if (grade.equals(getString(R.string.filter_all))) {
                     FindCallback findCallback = getFindCallbackWithQuery();
                     AVService.deptQuery(countQuery, dept, findCallback);
-                }
-                else{
+                } else {
                     FindCallback findCallback = getFindCallbackWithQuery();
-                    AVService.deptGradeQuery(countQuery, dept, grade,findCallback);
+                    AVService.deptGradeQuery(countQuery, dept, grade, findCallback);
                 }
             }
         });
 
         // 筛选grade点击
-        fvTopFilter.setOnItemFilterClickListener(new FilterView.OnItemFilterClickListener() {
+        fvTopFilter.setOnItemGradeClickListener(new FilterView.OnItemGradeClickListener() {
             @Override
-            public void onItemFilterClick(FilterEntity entity) {
+            public void onItemGradeClick(FilterEntity entity) {
                 grade = entity.getKey();
-                if (dept.equals(getString(R.string.filter_all))){
+                if (dept.equals(getString(R.string.filter_all))) {
                     FindCallback findCallback = getFindCallbackWithQuery();
                     AVService.gradeQuery(countQuery, grade, findCallback);
-                }
-                else{
+                } else {
                     FindCallback findCallback = getFindCallbackWithQuery();
-                    AVService.deptGradeQuery(countQuery, dept, grade,findCallback);
+                    AVService.deptGradeQuery(countQuery, dept, grade, findCallback);
                 }
 
             }

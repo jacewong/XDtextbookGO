@@ -15,13 +15,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVFile;
@@ -30,12 +28,9 @@ import com.avos.avoscloud.SaveCallback;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URL;
 import java.util.HashMap;
-import java.util.Objects;
 
 import com.bumptech.glide.Glide;
-import com.software.xdtextbookgo.filter_opensource.ImageManager;
 import com.software.xdtextbookgo.model.BookInfo;
 import com.software.xdtextbookgo.service.AVService;
 import com.software.xdtextbookgo.views.ActionSheetDialog;
@@ -50,7 +45,6 @@ public class PublishActivity extends XDtextbookGOActivity {
     private Button btn_publish;
     private ImageView img_btn;
     private Context mContext;
-    private ImageManager imageManager;
     private ProgressBar progressBar;
     private ActionSheetDialog mActionSheet;
     private BookInfo mbook;

@@ -1,4 +1,4 @@
-package com.software.xdtextbookgo.filter_opensource;
+package com.software.xdtextbookgo.model;
 
 
 import java.io.Serializable;

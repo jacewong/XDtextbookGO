@@ -40,7 +40,7 @@
 
          <include layout="@layout/title_layout"/>
 
-         <com.software.xdtextbookgo.filter_opensource.FilterView
+         <com.software.xdtextbookgo.service.FilterView
             android:id="@+id/fv_top_filter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

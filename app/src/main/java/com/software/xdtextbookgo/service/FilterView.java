@@ -1,4 +1,4 @@
-package com.software.xdtextbookgo.filter_opensource;
+package com.software.xdtextbookgo.service;
 /**
  * Created by huang on 2016/5/4.
  */
@@ -17,13 +17,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 
-import com.avos.avoscloud.AVException;
-import com.avos.avoscloud.AVObject;
-import com.avos.avoscloud.FindCallback;
 import com.software.xdtextbookgo.R;
-import com.software.xdtextbookgo.service.AVService;
-
-import java.util.List;
+import com.software.xdtextbookgo.adapter.FilterOneAdapter;
+import com.software.xdtextbookgo.model.FilterData;
+import com.software.xdtextbookgo.model.FilterEntity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -47,28 +44,23 @@ public class FilterView extends LinearLayout implements View.OnClickListener {
     LinearLayout llFilter;
     @Bind(R.id.lv_right)
     ListView lvRight;
-    @Bind(R.id.ll_head_layout)
-    LinearLayout llHeadLayout;
     @Bind(R.id.ll_content_list_view)
     LinearLayout llContentListView;
     @Bind(R.id.view_mask_bg)
     View viewMaskBg;
 
-
-
     private Context mContext;
     private Activity mActivity;
-    private boolean isStickyTop = false; // 是否吸附在顶部
     private boolean isShowing = false;
     private int filterPosition = -1;
     private int panelHeight;
     private FilterData filterData;
 
-    private FilterEntity selectedSortEntity; // 被选择的排序项
-    private FilterEntity selectedFilterEntity; // 被选择的筛选项
+    private FilterEntity selectedDeptEntity; // 被选择的学院项
+    private FilterEntity selectedGradeEntity; // 被选择的年级项
 
-    private FilterOneAdapter sortAdapter;
-    private FilterOneAdapter filterAdapter;
+    private FilterOneAdapter deptAdapter;
+    private FilterOneAdapter gradeAdapter;
 
     public FilterView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -153,10 +145,10 @@ public class FilterView extends LinearLayout implements View.OnClickListener {
         resetFilterStatus();
         switch (position) {
             case 0:
-                setSortAdapter();
+                setDeptAdapter();
                 break;
             case 1:
-                setFilterAdapter();
+                setGradeAdapter();
                 break;
         }
 
@@ -166,40 +158,40 @@ public class FilterView extends LinearLayout implements View.OnClickListener {
 
 
     // 设置院系数据
-    private void setSortAdapter() {
+    private void setDeptAdapter() {
         tvSort.setTextColor(mActivity.getResources().getColor(R.color.colorAccent));
         ivSortArrow.setImageResource(R.drawable.home_up_arrow);
         lvRight.setVisibility(VISIBLE);
-        sortAdapter = new FilterOneAdapter(mContext, filterData.getSorts());
-        lvRight.setAdapter(sortAdapter);
+        deptAdapter = new FilterOneAdapter(mContext, filterData.getDept());
+        lvRight.setAdapter(deptAdapter);
         lvRight.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectedSortEntity = filterData.getSorts().get(position);
-                sortAdapter.setSelectedEntity(selectedSortEntity);
+                selectedDeptEntity = filterData.getDept().get(position);
+                deptAdapter.setSelectedEntity(selectedDeptEntity);
                 hide();
-                if (onItemSortClickListener != null) {
-                    onItemSortClickListener.onItemSortClick(selectedSortEntity);
+                if (onItemDeptClickListener != null) {
+                    onItemDeptClickListener.onItemDeptClick(selectedDeptEntity);
                 }
             }
         });
     }
 
     // 设置年级数据
-    private void setFilterAdapter() {
+    private void setGradeAdapter() {
         tvFilter.setTextColor(mActivity.getResources().getColor(R.color.colorAccent));
         ivFilterArrow.setImageResource(R.drawable.home_up_arrow);
         lvRight.setVisibility(VISIBLE);
-        filterAdapter = new FilterOneAdapter(mContext, filterData.getFilters());
-        lvRight.setAdapter(filterAdapter);
+        gradeAdapter = new FilterOneAdapter(mContext, filterData.getGrade());
+        lvRight.setAdapter(gradeAdapter);
         lvRight.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectedFilterEntity = filterData.getFilters().get(position);
-                filterAdapter.setSelectedEntity(selectedFilterEntity);
+                selectedGradeEntity = filterData.getGrade().get(position);
+                gradeAdapter.setSelectedEntity(selectedGradeEntity);
                 hide();
-                if (onItemFilterClickListener != null) {
-                    onItemFilterClickListener.onItemFilterClick(selectedFilterEntity);
+                if (onItemGradeClickListener != null) {
+                    onItemGradeClickListener.onItemGradeClick(selectedGradeEntity);
                 }
             }
         });
@@ -228,10 +220,6 @@ public class FilterView extends LinearLayout implements View.OnClickListener {
         ObjectAnimator.ofFloat(llContentListView, "translationY", 0, -panelHeight).setDuration(200).start();
     }
 
-    // 是否吸附在顶部
-    public void setStickyTop(boolean stickyTop) {
-        isStickyTop = stickyTop;
-    }
 
     // 设置筛选数据
     public void setFilterData(Activity activity, FilterData filterData) {
@@ -253,22 +241,22 @@ public class FilterView extends LinearLayout implements View.OnClickListener {
         void onFilterClick(int position);
     }
 
-    // 排序Item点击
-    private OnItemSortClickListener onItemSortClickListener;
-    public void setOnItemSortClickListener(OnItemSortClickListener onItemSortClickListener) {
-        this.onItemSortClickListener = onItemSortClickListener;
+    // 学院Item点击
+    private OnItemDeptClickListener onItemDeptClickListener;
+    public void setOnItemDeptClickListener(OnItemDeptClickListener onItemDeptClickListener) {
+        this.onItemDeptClickListener = onItemDeptClickListener;
     }
-    public interface OnItemSortClickListener {
-        void onItemSortClick(FilterEntity entity);
+    public interface OnItemDeptClickListener {
+        void onItemDeptClick(FilterEntity entity);
     }
 
-    // 筛选Item点击
-    private OnItemFilterClickListener onItemFilterClickListener;
-    public void setOnItemFilterClickListener(OnItemFilterClickListener onItemFilterClickListener) {
-        this.onItemFilterClickListener = onItemFilterClickListener;
+    // 年级Item点击
+    private OnItemGradeClickListener onItemGradeClickListener;
+    public void setOnItemGradeClickListener(OnItemGradeClickListener onItemGradeClickListener) {
+        this.onItemGradeClickListener = onItemGradeClickListener;
     }
-    public interface OnItemFilterClickListener {
-        void onItemFilterClick(FilterEntity entity);
+    public interface OnItemGradeClickListener {
+        void onItemGradeClick(FilterEntity entity);
     }
 
 }
